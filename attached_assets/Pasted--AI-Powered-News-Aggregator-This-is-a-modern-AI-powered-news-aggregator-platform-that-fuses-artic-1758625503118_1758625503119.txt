@@ -1,0 +1,46 @@
+# AI-Powered News Aggregator
+
+This is a modern, AI-powered news aggregator platform that fuses articles from various sources into a cohesive, easy-to-read feed. It's designed to be a "Twitter for news," providing a dynamic and interactive way to consume daily information.
+
+## Core Features
+
+*   **Automated News Feed**: The platform automatically fetches articles from multiple news sources, uses AI to fuse them into unique, comprehensive posts, and displays them in a continuously updated feed.
+*   **AI-Powered Content Fusion**: Leverages generative AI to combine headlines and articles from different sources, creating a single, enhanced news post.
+*   **Daily News Summary**: At the top of the feed, an AI-generated summary gives you a quick overview of the day's most important news and the overall sentiment.
+*   **Text-to-Speech (Podcast Mode)**: Each article can be converted into audio, allowing you to listen to the news like a podcast.
+*   **Interactive AI Chat**: Engage in a conversation with an AI assistant about any article. Ask follow-up questions, get clarifications, or dive deeper into specific topics.
+*   **Professional, Feed-Based UI**: A sleek, dark-themed interface inspired by popular social media platforms, designed for an intuitive and engaging user experience.
+
+## Tech Stack
+
+*   **Framework**: [Next.js](https://nextjs.org/) with App Router
+*   **AI/Generative AI**: [Genkit](https://firebase.google.com/docs/genkit) with Google Gemini
+*   **UI Components**: [ShadCN UI](https://ui.shadcn.com/)
+*   **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+*   **Language**: [TypeScript](https://www.typescriptlang.org/)
+
+## Getting Started
+
+1.  **Install Dependencies**:
+    ```bash
+    npm install
+    ```
+
+2.  **Set Up Environment Variables**:
+    Create a `.env` file in the root of the project and add your Gemini API key:
+    ```
+    GEMINI_API_KEY=YOUR_API_KEY_HERE
+    ```
+
+3.  **Run the Development Server**:
+    ```bash
+    npm run dev
+    ```
+
+4.  **Start the Genkit Inspector (Optional)**:
+    To monitor and debug your AI flows, run the Genkit inspector in a separate terminal:
+    ```bash
+    npm run genkit:watch
+    ```
+
+Open [http://localhost:9002](http://localhost:9002) with your browser to see the result.
