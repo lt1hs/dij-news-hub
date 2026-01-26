@@ -33,12 +33,12 @@ export default function Header({ onPaneToggle }: HeaderProps) {
     <>
       <div className="h-24"></div>
 
-      <header className="fixed z-[60] top-4 left-1/2 -translate-x-1/2 w-[min(1200px,94vw)]">
+      <header className="fixed z-[60] top-4 left-1/2 -translate-x-1/2 w-[min(1350px,94vw)]">
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           className={cn(
-            "relative w-full rounded-[15px] border border-white/10 bg-white/[0.03] backdrop-blur-md px-4 py-2.5 transition-all duration-300 shadow-2xl shadow-black/40",
+            "relative w-full rounded-[8px] border border-white/10 bg-white/[0.03] backdrop-blur-md px-4 py-2.5 transition-all duration-300 shadow-2xl shadow-black/40",
             scrolled ? "bg-white/[0.05] border-white/20 shadow-primary/5" : ""
           )}
         >

@@ -125,7 +125,10 @@ export default function NewsCard({
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => onPlayClick(id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onPlayClick(id);
+            }}
             className="h-8 w-8 rounded-lg bg-sidebar-primary text-white flex items-center justify-center shadow-lg"
           >
             <Play size={14} fill="white" className="ml-0.5" />
@@ -206,7 +209,10 @@ export default function NewsCard({
           <div className="flex items-center gap-1">
             <motion.button
               whileTap={{ scale: 0.9 }}
-              onClick={() => handleAction('like', isLiked, setIsLiked)}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleAction('like', isLiked, setIsLiked);
+              }}
               className={cn(
                 "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-bold transition-all",
                 isLiked ? "bg-red-500/10 text-red-500" : "text-neutral-500 hover:text-white"
@@ -218,7 +224,10 @@ export default function NewsCard({
 
             <motion.button
               whileTap={{ scale: 0.9 }}
-              onClick={() => handleAction('repost', isReposted, setIsReposted)}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleAction('repost', isReposted, setIsReposted);
+              }}
               className={cn(
                 "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-bold transition-all",
                 isReposted ? "bg-green-500/10 text-green-500" : "text-neutral-500 hover:text-white"
@@ -230,7 +239,10 @@ export default function NewsCard({
 
             <motion.button
               whileTap={{ scale: 0.9 }}
-              onClick={() => onChatClick(id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onChatClick(id);
+              }}
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-bold text-neutral-500 hover:text-sidebar-primary transition-all"
             >
               <MessageCircle size={13} />
@@ -242,7 +254,10 @@ export default function NewsCard({
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.9 }}
-              onClick={() => handleAction('bookmark', isBookmarked, setIsBookmarked)}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleAction('bookmark', isBookmarked, setIsBookmarked);
+              }}
               className={cn(
                 "p-2 rounded-lg transition-all",
                 isBookmarked ? "text-sidebar-primary bg-sidebar-primary/5" : "text-neutral-500 hover:text-white"
@@ -253,7 +268,10 @@ export default function NewsCard({
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.9 }}
-              onClick={() => onShareClick(id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onShareClick(id);
+              }}
               className="p-2 text-neutral-500 hover:text-white transition-all"
             >
               <ArrowUpRight size={16} />

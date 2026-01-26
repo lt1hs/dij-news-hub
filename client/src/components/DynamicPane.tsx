@@ -59,7 +59,7 @@ export default function DynamicPane({ isCompact, onToggleCompact }: DynamicPaneP
   if (isCompact) {
     return (
       <div className="fixed top-0 right-0 w-12 h-screen bg-white/5 border-l border-white/10 z-40 flex flex-col">
-        <button 
+        <button
           onClick={onToggleCompact}
           className="flex items-center justify-center h-12 w-12 text-muted-foreground hover:text-foreground hover:bg-accent transition border-b border-white/10"
         >
@@ -78,7 +78,7 @@ export default function DynamicPane({ isCompact, onToggleCompact }: DynamicPaneP
       <div className="flex items-center justify-between p-2 border-b border-white/10 bg-white/5 flex-shrink-0">
         <div className="flex items-center gap-2">
           {showChat && (
-            <button 
+            <button
               onClick={() => setShowChat(false)}
               className="inline-flex items-center justify-center h-5 w-5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition"
             >
@@ -97,7 +97,7 @@ export default function DynamicPane({ isCompact, onToggleCompact }: DynamicPaneP
             </p>
           </div>
         </div>
-        <button 
+        <button
           onClick={onToggleCompact}
           className="inline-flex items-center justify-center h-5 w-5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent ring-1 ring-transparent hover:ring-border focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 transition"
         >
@@ -126,7 +126,7 @@ export default function DynamicPane({ isCompact, onToggleCompact }: DynamicPaneP
                 </div>
               </div>
 
-              <CompactDailySummary 
+              <CompactDailySummary
                 summary="Today's market showed mixed signals with tech stocks leading gains while energy sector faced headwinds."
                 sentiment="positive"
                 keyStories={[
@@ -137,10 +137,10 @@ export default function DynamicPane({ isCompact, onToggleCompact }: DynamicPaneP
                 ]}
                 date="October 2, 2024"
               />
-              
+
               {/* Chat Button */}
               <div className="mt-3 flex justify-center">
-                <button 
+                <button
                   onClick={() => setShowChat(true)}
                   className="inline-flex items-center gap-1.5 rounded-lg bg-primary text-primary-foreground px-3 py-1.5 text-xs font-medium hover:bg-primary/90 transition"
                 >
@@ -149,7 +149,7 @@ export default function DynamicPane({ isCompact, onToggleCompact }: DynamicPaneP
                 </button>
               </div>
             </div>
-            
+
             {/* Chat Input above dock */}
             <div className="p-2 flex-shrink-0">
               <div className="w-full border border-white/10 bg-white/5 backdrop-blur-sm rounded-lg overflow-hidden mb-2">
@@ -181,14 +181,13 @@ export default function DynamicPane({ isCompact, onToggleCompact }: DynamicPaneP
                     <button className="p-1 text-muted-foreground hover:text-foreground transition-colors">
                       <Mic className="w-3 h-3" />
                     </button>
-                    <button 
-                      onClick={handleSend} 
+                    <button
+                      onClick={handleSend}
                       disabled={!input.trim() || isLoading}
-                      className={`w-6 h-6 flex items-center justify-center rounded transition-colors ${
-                        input.trim()
-                          ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                          : "bg-white/10 text-muted-foreground cursor-not-allowed"
-                      }`}
+                      className={`w-6 h-6 flex items-center justify-center rounded transition-colors ${input.trim()
+                        ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                        : "bg-white/10 text-muted-foreground cursor-not-allowed"
+                        }`}
                     >
                       <Send className="w-3 h-3" />
                     </button>
@@ -196,7 +195,7 @@ export default function DynamicPane({ isCompact, onToggleCompact }: DynamicPaneP
                 </div>
               </div>
             </div>
-            
+
             {/* ExpandableTabs at bottom */}
             <div className="p-2 border-t border-white/10 bg-white/5 flex-shrink-0">
               <ExpandableTabs
@@ -212,70 +211,8 @@ export default function DynamicPane({ isCompact, onToggleCompact }: DynamicPaneP
           </div>
         ) : (
           // Chat View - Full Height
-          <div className="h-full flex flex-col">
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-2">
-              <div className="space-y-2 h-full">
-                {messages.map((message) => (
-                  <div
-                    key={message.id}
-                    className={`flex items-start gap-1.5 ${message.isUser ? "flex-row-reverse" : ""}`}
-                  >
-                    <div className={`w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0 ${
-                      message.isUser 
-                        ? "bg-muted text-muted-foreground" 
-                        : "bg-primary/10 text-primary"
-                    }`}>
-                      {message.isUser ? <User className="w-2.5 h-2.5" /> : <Bot className="w-2.5 h-2.5" />}
-                    </div>
-                    <div className={`max-w-[75%] ${message.isUser ? "text-right" : ""}`}>
-                      <div className={`inline-block p-1.5 rounded-lg ${
-                        message.isUser
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted text-foreground"
-                      }`}>
-                        <p className="text-[10px]">{message.content}</p>
-                      </div>
-                      <p className={`text-[8px] mt-0.5 text-muted-foreground`}>
-                        {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-                {isLoading && (
-                  <div className="flex items-start gap-1.5">
-                    <div className="w-5 h-5 rounded-md bg-primary/10 flex items-center justify-center">
-                      <Bot className="w-2.5 h-2.5 text-primary" />
-                    </div>
-                    <div className="flex items-center gap-1.5 p-1.5 bg-muted rounded-lg">
-                      <Loader2 className="w-2.5 h-2.5 animate-spin text-muted-foreground" />
-                      <span className="text-[10px] text-muted-foreground">AI is thinking...</span>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Input - Fixed at bottom */}
-            <div className="p-2 border-t border-white/10 bg-white/5 flex-shrink-0">
-              <div className="flex gap-1.5">
-                <input
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder="Ask about today's news..."
-                  onKeyPress={(e) => e.key === "Enter" && handleSend()}
-                  className="flex-1 rounded-md bg-muted px-2 py-1.5 text-xs text-foreground placeholder:text-muted-foreground ring-1 ring-border focus:ring-2 focus:ring-primary/60 focus:outline-none transition"
-                  disabled={isLoading}
-                />
-                <button 
-                  onClick={handleSend} 
-                  disabled={!input.trim() || isLoading}
-                  className="inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground px-2 py-1.5 text-xs font-medium hover:bg-primary/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 disabled:opacity-50 disabled:cursor-not-allowed transition"
-                >
-                  <Send className="w-3 h-3" />
-                </button>
-              </div>
-            </div>
+          <div className="h-full overflow-y-auto custom-scrollbar">
+            <AIAssistantInterface />
           </div>
         )}
       </div>
