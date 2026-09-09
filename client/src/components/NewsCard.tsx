@@ -1,10 +1,10 @@
-import { useState } from "react";
 import { Bookmark, Clock3, Headphones, MoreHorizontal, Share2, ShieldCheck, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { useSavedArticles } from "@/hooks/useSavedArticles";
 import { cn } from "@/lib/utils";
 
 interface NewsCardProps {
@@ -33,7 +33,8 @@ export default function NewsCard({
   const { isAuthenticated } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [isBookmarked, setIsBookmarked] = useState(false);
+  const { isSaved, toggleSave } = useSavedArticles();
+  const bookmarked = isSaved(id);
 
   const interactionMutation = useMutation({
     mutationFn: async ({ type, action }: { type: string; action: "add" | "remove" }) => {
@@ -46,13 +47,24 @@ export default function NewsCard({
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["/api/articles"] }),
   });
 
-  const handleAction = (type: "like" | "bookmark", value: boolean, update: (next: boolean) => void) => {
+  const handleBookmark = () => {
     if (!isAuthenticated) {
       toast({ title: "Sign in required", description: "Please sign in to save or react to stories." });
       return;
     }
-    update(!value);
-    interactionMutation.mutate({ type, action: value ? "remove" : "add" });
+    const added = toggleSave({
+      id,
+      title,
+      summary,
+      category,
+      imageUrl,
+      sources,
+    });
+    interactionMutation.mutate({ type: "bookmark", action: added ? "add" : "remove" });
+    toast({
+      title: added ? "Saved" : "Removed",
+      description: added ? "Added to your Saved library." : "Removed from Saved.",
+    });
   };
 
   const source = sources[0] || "DIJAI Newsroom";
@@ -63,7 +75,7 @@ export default function NewsCard({
       initial={{ opacity: 0, y: 8 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-24px" }}
-      transition={{ duration: .28 }}
+      transition={{ duration: 0.28 }}
       className="group grid min-h-[178px] grid-cols-[minmax(0,1fr)_112px] bg-transparent transition-colors hover:bg-white/[.022] sm:min-h-[204px] sm:grid-cols-[minmax(0,1fr)_210px]"
     >
       <div className="flex min-w-0 flex-col p-4 sm:p-5">
@@ -86,22 +98,44 @@ export default function NewsCard({
 
         <div className="mt-auto flex items-center justify-between gap-2 pt-3">
           <div className="flex items-center gap-1.5 whitespace-nowrap text-[10px] text-neutral-600 sm:text-[11px]">
-            <Clock3 size={12} /><span>{timestamp}</span><span className="hidden sm:inline">· {readTime} read</span>
+            <Clock3 size={12} />
+            <span>{timestamp}</span>
+            <span className="hidden sm:inline">· {readTime} read</span>
           </div>
 
           <div className="flex items-center gap-0.5">
-            <button onClick={() => onPlayClick(id)} aria-label="Listen to article" className="flex h-8 w-8 items-center justify-center rounded-md text-neutral-500 transition hover:bg-white/[.05] hover:text-white"><Headphones size={14} /></button>
-            <button onClick={() => onChatClick(id)} aria-label="Analyze article" className="flex h-8 items-center gap-1.5 rounded-md px-2 text-neutral-400 transition hover:bg-white/[.05] hover:text-white"><Sparkles size={14} /><span className="hidden text-[11px] font-medium md:inline">Analyze</span></button>
-            <button onClick={() => handleAction("bookmark", isBookmarked, setIsBookmarked)} aria-label="Bookmark article" className={cn("hidden h-8 w-8 items-center justify-center rounded-md transition sm:flex", isBookmarked ? "text-sidebar-primary" : "text-neutral-500 hover:bg-white/[.05] hover:text-white")}><Bookmark size={14} className={isBookmarked ? "fill-current" : ""} /></button>
-            <button onClick={() => onShareClick(id)} aria-label="Share article" className="hidden h-8 w-8 items-center justify-center rounded-md text-neutral-500 transition hover:bg-white/[.05] hover:text-white md:flex"><Share2 size={14} /></button>
-            <button aria-label="More options" className="flex h-8 w-8 items-center justify-center rounded-md text-neutral-600 transition hover:bg-white/[.05] hover:text-white"><MoreHorizontal size={15} /></button>
+            <button onClick={() => onPlayClick(id)} aria-label="Listen to article" className="flex h-8 w-8 items-center justify-center rounded-md text-neutral-500 transition hover:bg-white/[.05] hover:text-white">
+              <Headphones size={14} />
+            </button>
+            <button onClick={() => onChatClick(id)} aria-label="Analyze article" className="flex h-8 items-center gap-1.5 rounded-md px-2 text-neutral-400 transition hover:bg-white/[.05] hover:text-white">
+              <Sparkles size={14} />
+              <span className="hidden text-[11px] font-medium md:inline">Analyze</span>
+            </button>
+            <button
+              onClick={handleBookmark}
+              aria-label="Bookmark article"
+              className={cn(
+                "hidden h-8 w-8 items-center justify-center rounded-md transition sm:flex",
+                bookmarked ? "text-sidebar-primary" : "text-neutral-500 hover:bg-white/[.05] hover:text-white"
+              )}
+            >
+              <Bookmark size={14} className={bookmarked ? "fill-current" : ""} />
+            </button>
+            <button onClick={() => onShareClick(id)} aria-label="Share article" className="hidden h-8 w-8 items-center justify-center rounded-md text-neutral-500 transition hover:bg-white/[.05] hover:text-white md:flex">
+              <Share2 size={14} />
+            </button>
+            <button aria-label="More options" className="flex h-8 w-8 items-center justify-center rounded-md text-neutral-600 transition hover:bg-white/[.05] hover:text-white">
+              <MoreHorizontal size={15} />
+            </button>
           </div>
         </div>
       </div>
 
       <button onClick={onClick} className="relative m-3 ml-0 overflow-hidden rounded-lg bg-neutral-900 text-left sm:m-4 sm:ml-0">
         <img src={displayImage} alt="" className="h-full w-full object-cover opacity-80 transition duration-500 group-hover:scale-[1.025] group-hover:opacity-100" />
-        <span className="absolute bottom-2 right-2 flex h-7 w-7 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white backdrop-blur-sm sm:hidden"><Headphones size={12} /></span>
+        <span className="absolute bottom-2 right-2 flex h-7 w-7 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white backdrop-blur-sm sm:hidden">
+          <Headphones size={12} />
+        </span>
       </button>
     </motion.article>
   );

@@ -7,6 +7,7 @@ interface ArticleFocusModeProps {
   isOpen: boolean;
   onClose: () => void;
   article: Article | null;
+  onAskDesk?: (article: Article, question?: string) => void;
 }
 
 const SUMMARY_POINTS = [
@@ -15,7 +16,7 @@ const SUMMARY_POINTS = [
   "The most important next signal will be adoption data rather than additional product announcements.",
 ];
 
-export default function ArticleFocusMode({ isOpen, onClose, article }: ArticleFocusModeProps) {
+export default function ArticleFocusMode({ isOpen, onClose, article, onAskDesk }: ArticleFocusModeProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [question, setQuestion] = useState("");
   if (!article) return null;
@@ -26,6 +27,13 @@ export default function ArticleFocusMode({ isOpen, onClose, article }: ArticleFo
     "Regulators outline the next phase of reporting requirements",
     "What the latest shift means for consumers and smaller companies",
   ];
+
+  const submitQuestion = () => {
+    if (!question.trim()) return;
+    onAskDesk?.(article, question.trim());
+    setQuestion("");
+    onClose();
+  };
 
   return (
     <AnimatePresence>
@@ -103,7 +111,7 @@ export default function ArticleFocusMode({ isOpen, onClose, article }: ArticleFo
             </div>
 
             <div className="absolute inset-x-0 bottom-0 z-30 bg-gradient-to-t from-[#0b1017] via-[#0b1017] to-transparent px-4 pb-4 pt-8 sm:px-8">
-              <div className="mx-auto flex h-14 max-w-[680px] items-center gap-3 rounded-2xl border border-white/[.1] bg-white/[.06] px-4 shadow-2xl backdrop-blur-xl"><input value={question} onChange={(event) => setQuestion(event.target.value)} placeholder="Ask about this story…" className="min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-neutral-600" /><button className="text-neutral-500"><Mic size={19} /></button><button disabled={!question.trim()} className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-neutral-950 disabled:bg-white/10 disabled:text-neutral-600"><ArrowUp size={17} /></button></div>
+              <div className="mx-auto flex h-14 max-w-[680px] items-center gap-3 rounded-2xl border border-white/[.1] bg-white/[.06] px-4 shadow-2xl backdrop-blur-xl"><input value={question} onChange={(event) => setQuestion(event.target.value)} onKeyDown={(event) => event.key === "Enter" && submitQuestion()} placeholder="Ask about this story…" className="min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-neutral-600" /><button type="button" className="text-neutral-500"><Mic size={19} /></button><button type="button" onClick={submitQuestion} disabled={!question.trim()} className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-neutral-950 disabled:bg-white/10 disabled:text-neutral-600"><ArrowUp size={17} /></button></div>
             </div>
           </motion.article>
         </div>

@@ -86,7 +86,7 @@ export default function TopHeadlinesSlider() {
 
   return (
     <div
-      className="relative w-full rounded-[15px] border border-white/10 bg-black/20 backdrop-blur-md overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] h-[390px] sm:h-[400px] flex group"
+      className="relative w-full rounded-[15px] border border-white/10 bg-black/20 backdrop-blur-md overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] h-[440px] sm:h-[460px] flex group"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

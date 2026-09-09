@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -11,8 +11,19 @@ import NewsFeed from "@/components/NewsFeed";
 import Landing from "@/components/Landing";
 import NotFound from "@/pages/not-found";
 import PixelBackground from "@/components/PixelBackground";
+import type { DeskMode } from "@/components/DynamicPane";
 
-function Router({ paneCompact, setPaneCompact }: { paneCompact: boolean; setPaneCompact: (compact: boolean) => void }) {
+function Router({
+  deskMode,
+  setDeskMode,
+  commandOpen,
+  setCommandOpen,
+}: {
+  deskMode: DeskMode;
+  setDeskMode: (mode: DeskMode) => void;
+  commandOpen: boolean;
+  setCommandOpen: (open: boolean) => void;
+}) {
   const { isAuthenticated, isLoading } = useAuth();
 
   return (
@@ -22,7 +33,12 @@ function Router({ paneCompact, setPaneCompact }: { paneCompact: boolean; setPane
       ) : (
         <>
           <Route path="/">
-            <NewsFeed paneCompact={paneCompact} setPaneCompact={setPaneCompact} />
+            <NewsFeed
+              deskMode={deskMode}
+              setDeskMode={setDeskMode}
+              commandOpen={commandOpen}
+              setCommandOpen={setCommandOpen}
+            />
           </Route>
         </>
       )}
@@ -32,7 +48,19 @@ function Router({ paneCompact, setPaneCompact }: { paneCompact: boolean; setPane
 }
 
 function App() {
-  const [paneCompact, setPaneCompact] = useState(true);
+  const [deskMode, setDeskMode] = useState<DeskMode>("compact");
+  const [commandOpen, setCommandOpen] = useState(false);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        setCommandOpen((open) => !open);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -40,8 +68,17 @@ function App() {
         <SidebarProvider>
           <div className="min-h-screen relative">
             <PixelBackground />
-            <Header onPaneToggle={() => setPaneCompact(!paneCompact)} />
-            <Router paneCompact={paneCompact} setPaneCompact={setPaneCompact} />
+            <Header
+              deskPinned={deskMode === "pinned"}
+              onSearchOpen={() => setCommandOpen(true)}
+              onPaneToggle={() => setDeskMode((mode) => (mode === "compact" ? "float" : "compact"))}
+            />
+            <Router
+              deskMode={deskMode}
+              setDeskMode={setDeskMode}
+              commandOpen={commandOpen}
+              setCommandOpen={setCommandOpen}
+            />
           </div>
         </SidebarProvider>
         <Toaster />

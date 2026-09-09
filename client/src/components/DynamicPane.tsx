@@ -1,222 +1,500 @@
-import { useState } from "react";
-import { Send, X, Bot, User, Loader2, MessageCircle, ChevronLeft, ChevronRight, Mic, Paperclip, MoreHorizontal, Bookmark, Share2, RefreshCw, BrainCircuit } from "lucide-react";
-import CompactDailySummary from "./CompactDailySummary";
-import { AIAssistantInterface } from "./AIAssistantInterface";
-import { CompactLoader } from "./CompactLoader";
-import { ExpandableTabs } from "./ui/expandable-tabs";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { ArrowUp, ChevronDown, GitCompare, Mic, Minus, PanelRight, Pin, PinOff, Sparkles, TrendingUp, X } from "lucide-react";
+import { useSidebar } from "@/hooks/useSidebar";
+import { cn } from "@/lib/utils";
+
+export type DeskMode = "compact" | "float" | "pinned";
+
+export interface DeskArticleContext {
+  id: string;
+  title: string;
+  summary?: string;
+  sources?: string[];
+  category?: string;
+}
 
 interface Message {
   id: string;
   content: string;
   isUser: boolean;
-  timestamp: Date;
 }
 
 interface DynamicPaneProps {
-  isCompact: boolean;
-  onToggleCompact: () => void;
+  mode: DeskMode;
+  onModeChange: (mode: DeskMode) => void;
+  contextArticle?: DeskArticleContext | null;
+  onClearContext?: () => void;
+  pendingPrompt?: string | null;
+  onConsumePrompt?: () => void;
 }
 
-export default function DynamicPane({ isCompact, onToggleCompact }: DynamicPaneProps) {
-  const [showChat, setShowChat] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "1",
-      content: "Hi! I'm here to help you understand today's news. What would you like to know more about?",
-      isUser: false,
-      timestamp: new Date()
-    }
-  ]);
+const KEY_STORIES = [
+  { label: "Tech earnings", detail: "Q3 beat across majors" },
+  { label: "Inflation", detail: "Cooling for a third month" },
+  { label: "Energy", detail: "OPEC holds output steady" },
+  { label: "Policy", detail: "EU AI transparency rules" },
+];
+
+const SUGGESTIONS = ["What changed today?", "Top tech stories", "Market risks"];
+
+const BRIEF =
+  "Tech is leading, energy is soft, and policy is becoming the quieter through-line across today’s coverage.";
+
+export const DESK_PINNED_WIDTH = 380;
+
+export default function DynamicPane({ mode, onModeChange, contextArticle = null, onClearContext, pendingPrompt = null, onConsumePrompt }: DynamicPaneProps) {
+  const { collapsed } = useSidebar();
+  const reduceMotion = useReducedMotion();
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [briefOpen, setBriefOpen] = useState(true);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+  const replyTimer = useRef<number | null>(null);
 
-  const handleSend = async () => {
-    if (!input.trim()) return;
+  const isCompact = mode === "compact";
+  const isFloat = mode === "float";
+  const isPinned = mode === "pinned";
+  const isOpen = !isCompact;
+  const canSend = Boolean(input.trim()) && !isLoading;
 
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      content: input,
-      isUser: true,
-      timestamp: new Date()
+  const spring = reduceMotion
+    ? { type: "tween" as const, duration: 0.16 }
+    : { type: "spring" as const, stiffness: 440, damping: 38, mass: 0.72 };
+
+  useEffect(() => {
+    listRef.current?.scrollTo({
+      top: listRef.current.scrollHeight,
+      behavior: reduceMotion ? "auto" : "smooth",
+    });
+  }, [messages, isLoading, reduceMotion, mode]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const id = window.setTimeout(() => inputRef.current?.focus(), reduceMotion ? 0 : 160);
+    return () => window.clearTimeout(id);
+  }, [isOpen, mode, reduceMotion]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onModeChange("compact");
     };
+    window.addEventListener("keydown", onKeyDown);
 
-    setMessages(prev => [...prev, userMessage]);
+    if (!isFloat) {
+      return () => window.removeEventListener("keydown", onKeyDown);
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [isOpen, isFloat, onModeChange]);
+
+  useEffect(() => {
+    if (messages.length > 0) setBriefOpen(false);
+  }, [messages.length]);
+
+  useEffect(() => {
+    return () => {
+      if (replyTimer.current) window.clearTimeout(replyTimer.current);
+    };
+  }, []);
+
+  const handleSend = (value = input) => {
+    const text = value.trim();
+    if (!text || isLoading) return;
+
+    setMessages((prev) => [...prev, { id: `${Date.now()}-u`, content: text, isUser: true }]);
     setInput("");
     setIsLoading(true);
 
-    setTimeout(() => {
-      const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        content: "That's a great question! I can help explain the key points from today's news. What specific aspect interests you most?",
-        isUser: false,
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, aiMessage]);
+    if (replyTimer.current) window.clearTimeout(replyTimer.current);
+    replyTimer.current = window.setTimeout(() => {
+      const contextual = contextArticle
+        ? `On “${contextArticle.title}”: the feed’s strongest angle is practical deployment over announcement. ${(contextArticle.sources?.length || 0) > 1 ? `I compared ${contextArticle.sources?.slice(0, 3).join(", ")} — framing differs on timing more than outcome.` : "Open source compare for a side-by-side read."} Want a tighter brief or risks only?`
+        : "Across today’s desk, tech earnings are carrying risk appetite while energy softens. Policy and infrastructure are the quieter through-line — want any of those opened further?";
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `${Date.now()}-a`,
+          content: contextual,
+          isUser: false,
+        },
+      ]);
       setIsLoading(false);
-    }, 1500);
+      replyTimer.current = null;
+    }, 850);
   };
 
-  if (isCompact) {
-    return (
-      <div className="fixed bottom-4 left-4 right-4 z-[65] sm:left-auto sm:w-[390px]">
-        <button
-          onClick={onToggleCompact}
-          aria-label="Open AI assistant"
-          className="group relative flex h-14 w-full items-center gap-3 rounded-2xl border border-white/[.12] bg-[#111923]/90 px-4 text-left shadow-[0_16px_45px_rgba(0,0,0,.45)] backdrop-blur-2xl transition hover:border-white/20"
-        >
-          <span className="min-w-0 flex-1 text-sm text-neutral-500">Ask about the news…</span>
-          <Mic className="h-5 w-5 text-neutral-500" />
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-neutral-400 transition group-hover:bg-white group-hover:text-neutral-950"><Send className="h-4 w-4" /></span>
+  useEffect(() => {
+    if (!pendingPrompt || isCompact) return;
+    const prompt = pendingPrompt;
+    onConsumePrompt?.();
+    const id = window.setTimeout(() => handleSend(prompt), 220);
+    return () => window.clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingPrompt, isCompact]);
+
+  const runSourceCompare = () => {
+    const sources = contextArticle?.sources?.length
+      ? contextArticle.sources
+      : ["Reuters", "Bloomberg", "AP"];
+    handleSend(`Compare sources on ${contextArticle?.title || "today’s top story"} across ${sources.slice(0, 3).join(", ")}`);
+  };
+
+  const contextChip = contextArticle ? (
+    <div className="mb-2.5 rounded-xl border border-sidebar-primary/25 bg-sidebar-primary/[.08] px-3 py-2.5">
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-sidebar-primary">Story context</p>
+          <p className="mt-1 line-clamp-2 text-[12px] font-medium leading-5 text-white">{contextArticle.title}</p>
+          {contextArticle.category && <p className="mt-1 text-[10px] text-neutral-500">{contextArticle.category}</p>}
+        </div>
+        <button type="button" onClick={onClearContext} aria-label="Clear story context" className="rounded-md p-1 text-neutral-500 transition hover:bg-white/5 hover:text-white">
+          <X className="h-3.5 w-3.5" />
         </button>
       </div>
-    );
-  }
+      <div className="mt-2 flex flex-wrap gap-1.5">
+        <button
+          type="button"
+          onClick={() => handleSend(`Brief me on: ${contextArticle.title}`)}
+          className="rounded-full border border-white/[.1] bg-black/20 px-2.5 py-1 text-[11px] text-neutral-300 transition hover:text-white"
+        >
+          Brief this
+        </button>
+        <button
+          type="button"
+          onClick={runSourceCompare}
+          className="inline-flex items-center gap-1 rounded-full border border-white/[.1] bg-black/20 px-2.5 py-1 text-[11px] text-neutral-300 transition hover:text-white"
+        >
+          <GitCompare className="h-3 w-3" /> Compare sources
+        </button>
+      </div>
+    </div>
+  ) : null;
 
-  return (
-    <div className="fixed inset-y-3 right-3 z-[80] flex w-[min(360px,calc(100vw-1.5rem))] flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0a101a]/90 shadow-[0_24px_80px_rgba(0,0,0,.65)] backdrop-blur-2xl sm:inset-y-4 sm:right-4">
-      {/* Header */}
-      <div className="flex items-center justify-between p-3 border-b border-white/10 bg-white/5 flex-shrink-0">
-        <div className="flex items-center gap-2">
-          {showChat && (
-            <button
-              onClick={() => setShowChat(false)}
-              className="inline-flex items-center justify-center h-5 w-5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition"
-            >
-              <ChevronLeft className="w-3 h-3" />
-            </button>
-          )}
-          <div className="w-5 h-5 rounded-md bg-primary/10 flex items-center justify-center">
-            {showChat ? <Bot className="w-2.5 h-2.5 text-primary" /> : <MessageCircle className="w-2.5 h-2.5 text-primary" />}
-          </div>
-          <div>
-            <h3 className="font-semibold text-xs text-foreground">
-              {showChat ? "AI Assistant" : "Daily News"}
-            </h3>
-            <p className="text-[9px] text-muted-foreground">
-              {showChat ? "Ask about today's news" : "Summary & Chat"}
-            </p>
+  const centerClass = cn(
+    "fixed z-[80] bottom-5 left-1/2 w-[min(540px,calc(100vw-1.5rem))] -translate-x-1/2 will-change-transform",
+    "transition-[left] duration-300 ease-out",
+    collapsed ? "md:left-[calc(50%+2rem)]" : "md:left-[calc(50%+110px)]"
+  );
+
+  const iconBtn =
+    "inline-flex h-8 w-8 items-center justify-center rounded-full text-neutral-500 ring-1 ring-white/[.08] transition hover:bg-white/[.06] hover:text-white";
+
+  const composer = (
+    <div
+      className={cn(
+        "flex items-center gap-1 rounded-full border bg-[#111923]/95 px-1.5 py-1.5 pl-3.5 transition",
+        "border-white/[.1] focus-within:border-sidebar-primary/35 focus-within:bg-[#121b28]"
+      )}
+    >
+      <input
+        ref={inputRef}
+        value={input}
+        onChange={(event) => setInput(event.target.value)}
+        onKeyDown={(event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            handleSend();
+          }
+        }}
+        placeholder="Ask the desk…"
+        disabled={isLoading}
+        className="min-w-0 flex-1 bg-transparent py-1.5 text-[13px] text-white outline-none placeholder:text-neutral-600"
+      />
+      <button type="button" className="rounded-full p-2 text-neutral-500 transition hover:bg-white/[.04] hover:text-white" aria-label="Voice input">
+        <Mic className="h-4 w-4" />
+      </button>
+      <button
+        type="button"
+        onClick={() => handleSend()}
+        disabled={!canSend}
+        className={cn(
+          "flex h-8 w-8 items-center justify-center rounded-full transition",
+          canSend
+            ? "bg-sidebar-primary text-white shadow-[0_0_18px_rgba(59,130,246,.28)] enabled:active:scale-95"
+            : "bg-white/10 text-neutral-600"
+        )}
+        aria-label="Send"
+      >
+        <ArrowUp className="h-3.5 w-3.5" />
+      </button>
+    </div>
+  );
+
+  const briefing = (
+    <div className="overflow-hidden rounded-2xl border border-white/[.08] bg-white/[.025]">
+      <button
+        type="button"
+        onClick={() => setBriefOpen((open) => !open)}
+        className="flex w-full items-center justify-between gap-3 px-3.5 py-2.5 text-left transition hover:bg-white/[.02]"
+        aria-expanded={briefOpen}
+      >
+        <div className="flex min-w-0 items-center gap-2">
+          <TrendingUp className="h-3.5 w-3.5 shrink-0 text-emerald-400" />
+          <span className="truncate text-[12px] text-neutral-300">
+            <span className="font-medium text-emerald-400">Positive</span>
+            <span className="text-neutral-600"> · </span>
+            {briefOpen ? "Today’s outlook" : BRIEF}
+          </span>
+        </div>
+        <ChevronDown className={cn("h-4 w-4 shrink-0 text-neutral-500 transition-transform duration-200", briefOpen && "rotate-180")} />
+      </button>
+
+      <AnimatePresence initial={false}>
+        {briefOpen && (
+          <motion.div
+            key="brief-body"
+            initial={reduceMotion ? false : { height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={reduceMotion ? undefined : { height: 0, opacity: 0 }}
+            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            className="overflow-hidden"
+          >
+            <div className="space-y-3 border-t border-white/[.06] px-3.5 pb-3.5 pt-3">
+              <p className="text-[13px] leading-6 text-neutral-200">{BRIEF}</p>
+              <div className="flex gap-2 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                {KEY_STORIES.map((story) => (
+                  <button
+                    key={story.label}
+                    type="button"
+                    onClick={() => handleSend(`Brief me on ${story.label.toLowerCase()}`)}
+                    className="min-w-[120px] shrink-0 rounded-xl border border-white/[.08] bg-[#0d1520]/8 px-3 py-2 text-left transition hover:border-sidebar-primary/30 hover:bg-sidebar-primary/[.08]"
+                  >
+                    <span className="block text-[11px] font-semibold text-white">{story.label}</span>
+                    <span className="mt-0.5 block text-[10px] leading-4 text-neutral-500">{story.detail}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+
+  const thread = (
+    <div ref={listRef} className="relative min-h-0 flex-1 overflow-y-auto overscroll-contain custom-scrollbar">
+      {messages.length === 0 ? (
+        <div className="space-y-2.5 px-4 pb-2 pt-1">
+          <p className="text-[11px] text-neutral-600">Start from a prompt, or ask anything about the feed.</p>
+          <div className="flex flex-wrap gap-1.5">
+            {SUGGESTIONS.map((suggestion) => (
+              <button
+                key={suggestion}
+                type="button"
+                onClick={() => handleSend(suggestion)}
+                className="rounded-full border border-white/[.08] bg-white/[.03] px-3 py-1.5 text-[12px] text-neutral-400 transition hover:border-white/18 hover:bg-white/[.05] hover:text-white"
+              >
+                {suggestion}
+              </button>
+            ))}
           </div>
         </div>
-        <button
-          onClick={onToggleCompact}
-          aria-label="Close AI assistant"
-          className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground ring-1 ring-transparent transition hover:bg-accent hover:text-foreground hover:ring-border focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
-        >
-          <X className="h-4 w-4" />
-        </button>
-      </div>
+      ) : (
+        <div className="space-y-2.5 px-4 pb-2.5 pt-1">
+          <AnimatePresence initial={false}>
+            {messages.map((message) => (
+              <motion.div
+                key={message.id}
+                initial={reduceMotion ? false : { opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.18 }}
+                className={cn(
+                  "max-w-[88%] rounded-2xl px-3.5 py-2.5 text-[13px] leading-6",
+                  message.isUser
+                    ? "ml-auto rounded-br-md bg-sidebar-primary text-white shadow-[0_8px_24px_rgba(59,130,246,.18)]"
+                    : "mr-auto rounded-bl-md border border-white/[.08] bg-white/[.035] text-neutral-300"
+                )}
+              >
+                {message.content}
+              </motion.div>
+            ))}
+          </AnimatePresence>
+          {isLoading && (
+            <div className="mr-auto flex items-center gap-1.5 rounded-2xl rounded-bl-md border border-white/[.08] bg-white/[.035] px-3.5 py-3">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-sidebar-primary/70" />
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-sidebar-primary/50 [animation-delay:140ms]" />
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-sidebar-primary/30 [animation-delay:280ms]" />
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
 
-      {/* Content */}
-      <div className="flex-1 overflow-hidden">
-        {!showChat ? (
-          // Daily Summary View
-          <div className="h-full flex flex-col">
-            <div className="flex-1 overflow-y-auto p-2">
-              {/* Logo and Title */}
-              <div className="flex flex-col items-center mb-4">
-                <div className="mb-2">
-                  <CompactLoader size={48} text="AI" />
+  return (
+    <>
+      <AnimatePresence>
+        {isFloat && (
+          <motion.button
+            key="scrim"
+            type="button"
+            aria-label="Dismiss intelligence desk"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: reduceMotion ? 0.08 : 0.18 }}
+            onClick={() => onModeChange("compact")}
+            className="fixed inset-0 z-[75] bg-[#04070c]/45"
+          />
+        )}
+      </AnimatePresence>
+
+      {!isPinned && (
+        <div className={centerClass}>
+          <AnimatePresence initial={false}>
+            {isCompact ? (
+              <motion.button
+                key="dock"
+                type="button"
+                layoutId="desk-shell"
+                transition={spring}
+                whileHover={reduceMotion ? undefined : { y: -1 }}
+                whileTap={reduceMotion ? undefined : { scale: 0.985 }}
+                onClick={() => onModeChange("float")}
+                aria-label="Open intelligence desk"
+                className="group relative flex h-12 w-full items-center gap-3 overflow-hidden rounded-full border border-white/[.12] bg-[#0c141f]/92 px-2 pl-3 shadow-[0_14px_36px_rgba(0,0,0,.42)] backdrop-blur-xl"
+              >
+                <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+                <motion.span
+                  layoutId="desk-mark"
+                  className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sidebar-primary/15 ring-1 ring-sidebar-primary/30"
+                >
+                  {!reduceMotion && (
+                    <span className="absolute inset-0 animate-ping rounded-full bg-sidebar-primary/20 opacity-20 [animation-duration:2.6s]" />
+                  )}
+                  <Sparkles className="relative h-3.5 w-3.5 text-sidebar-primary" />
+                </motion.span>
+
+                <div className="min-w-0 flex-1 text-left">
+                  <motion.p layoutId="desk-title" className="text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
+                    Intelligence desk
+                  </motion.p>
+                  <p className="truncate text-[13px] text-neutral-300 transition group-hover:text-white">Ask about today’s news…</p>
                 </div>
-                <div className="text-center">
-                  <h1 className="text-sm font-semibold text-foreground mb-1">
-                    AI News Assistant
-                  </h1>
-                  <p className="text-xs text-muted-foreground">
-                    Ask about today's news
-                  </p>
+
+                <span className="mr-0.5 flex h-8 items-center gap-1.5 rounded-full bg-white/[.06] px-2.5 text-[11px] font-medium text-neutral-400 ring-1 ring-white/[.06] transition group-hover:bg-white group-hover:text-neutral-950">
+                  Open
+                  <ArrowUp className="h-3 w-3 rotate-45" />
+                </span>
+              </motion.button>
+            ) : (
+              <motion.div
+                key="float-panel"
+                layoutId="desk-shell"
+                transition={spring}
+                role="dialog"
+                aria-modal="true"
+                aria-label="Intelligence desk"
+                className="relative flex max-h-[min(64vh,560px)] w-full origin-bottom flex-col overflow-hidden rounded-[24px] border border-white/[.12] bg-[#0a1018]/96 shadow-[0_28px_90px_rgba(0,0,0,.58)] backdrop-blur-xl"
+              >
+                <div className="pointer-events-none absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-white/22 to-transparent" />
+
+                <div className="relative flex shrink-0 items-center justify-between gap-3 px-4 pb-2 pt-3.5">
+                  <div className="flex min-w-0 items-center gap-2.5">
+                    <motion.span
+                      layoutId="desk-mark"
+                      className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sidebar-primary/15 ring-1 ring-sidebar-primary/30"
+                    >
+                      <span className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,.9)]" />
+                      <Sparkles className="h-3.5 w-3.5 text-sidebar-primary" />
+                    </motion.span>
+                    <div className="min-w-0">
+                      <motion.p layoutId="desk-title" className="text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
+                        Intelligence desk
+                      </motion.p>
+                      <h3 className="text-[15px] font-semibold tracking-tight text-white">Daily briefing</h3>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => onModeChange("pinned")}
+                      aria-label="Pin desk to the right"
+                      title="Pin for long chat"
+                      className="hidden h-8 items-center gap-1.5 rounded-full px-2.5 text-[11px] font-medium text-neutral-400 ring-1 ring-white/[.08] transition hover:border-sidebar-primary/30 hover:bg-sidebar-primary/10 hover:text-sidebar-primary lg:inline-flex"
+                    >
+                      <Pin className="h-3.5 w-3.5" />
+                      Pin
+                    </button>
+                    <button type="button" onClick={() => onModeChange("compact")} aria-label="Minimize intelligence desk" className={iconBtn}>
+                      <Minus className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="relative shrink-0 px-4">
+                  {contextChip}
+                  {briefing}
+                </div>
+                <div className="mt-2 flex min-h-0 flex-1 flex-col">{thread}</div>
+                <div className="relative shrink-0 p-3 pt-1">{composer}</div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      )}
+
+      <AnimatePresence>
+        {isPinned && (
+          <motion.aside
+            key="pinned-panel"
+            initial={reduceMotion ? false : { opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={reduceMotion ? undefined : { opacity: 0, x: 16 }}
+            transition={spring}
+            aria-label="Pinned intelligence desk"
+            className="fixed inset-y-3 right-3 z-[70] hidden w-[min(360px,calc(100vw-1.5rem))] flex-col overflow-hidden rounded-[20px] border border-white/[.09] bg-[#0a121d]/94 shadow-[0_24px_70px_rgba(0,0,0,.42)] backdrop-blur-xl lg:flex"
+          >
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[radial-gradient(circle_at_18%_0%,rgba(35,145,255,.11),transparent_60%)]" />
+            <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/18 to-transparent" />
+
+            <div className="relative flex shrink-0 items-center justify-between gap-3 border-b border-white/[.07] px-3.5 py-3">
+              <div className="flex min-w-0 items-center gap-2.5">
+                <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-sidebar-primary/15 ring-1 ring-sidebar-primary/25">
+                  <span className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,.9)]" />
+                  <PanelRight className="h-3.5 w-3.5 text-sidebar-primary" />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-sky-400/90">Pinned desk</p>
+                  <h3 className="truncate text-[14px] font-semibold tracking-tight text-white">Continue the chat</h3>
                 </div>
               </div>
-
-              <CompactDailySummary
-                summary="Today's market showed mixed signals with tech stocks leading gains while energy sector faced headwinds."
-                sentiment="positive"
-                keyStories={[
-                  "Tech giants report stronger Q3 earnings",
-                  "Inflation cools for third consecutive month",
-                  "OPEC maintains steady oil output",
-                  "EU introduces new AI transparency regulations"
-                ]}
-                date="October 2, 2024"
-              />
-
-              {/* Chat Button */}
-              <div className="mt-3 flex justify-center">
+              <div className="flex items-center gap-1">
                 <button
-                  onClick={() => setShowChat(true)}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-primary text-primary-foreground px-3 py-1.5 text-xs font-medium hover:bg-primary/90 transition"
+                  type="button"
+                  onClick={() => onModeChange("float")}
+                  aria-label="Unpin to floating desk"
+                  title="Unpin"
+                  className={cn(iconBtn, "rounded-lg hover:text-sidebar-primary")}
                 >
-                  <MessageCircle className="w-3 h-3" />
-                  Chat about news
+                  <PinOff className="h-3.5 w-3.5" />
+                </button>
+                <button type="button" onClick={() => onModeChange("compact")} aria-label="Close pinned desk" className={cn(iconBtn, "rounded-lg")}>
+                  <Minus className="h-4 w-4" />
                 </button>
               </div>
             </div>
 
-            {/* Chat Input above dock */}
-            <div className="p-2 flex-shrink-0">
-              <div className="w-full border border-white/10 bg-white/5 backdrop-blur-sm rounded-lg overflow-hidden mb-2">
-                <div className="p-3">
-                  <input
-                    type="text"
-                    placeholder="Ask about today's news..."
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyPress={(e) => e.key === "Enter" && handleSend()}
-                    className="w-full text-xs text-foreground bg-transparent outline-none placeholder:text-muted-foreground"
-                    disabled={isLoading}
-                  />
-                </div>
-
-                {/* Functions and actions */}
-                <div className="px-3 py-2 flex items-center justify-between border-t border-white/10">
-                  <div className="flex items-center gap-1">
-                    <button className="flex items-center gap-1 px-2 py-1 rounded text-xs bg-primary/20 text-primary transition-colors">
-                      <Bot className="w-3 h-3" />
-                      <span>Search</span>
-                    </button>
-                    <button className="flex items-center gap-1 px-2 py-1 rounded text-xs bg-white/10 text-muted-foreground hover:text-foreground transition-colors">
-                      <BrainCircuit className="w-3 h-3" />
-                      <span>AI</span>
-                    </button>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <button className="p-1 text-muted-foreground hover:text-foreground transition-colors">
-                      <Mic className="w-3 h-3" />
-                    </button>
-                    <button
-                      onClick={handleSend}
-                      disabled={!input.trim() || isLoading}
-                      className={`w-6 h-6 flex items-center justify-center rounded transition-colors ${input.trim()
-                        ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                        : "bg-white/10 text-muted-foreground cursor-not-allowed"
-                        }`}
-                    >
-                      <Send className="w-3 h-3" />
-                    </button>
-                  </div>
-                </div>
-              </div>
+            <div className="relative shrink-0 px-3 pt-3">
+              {contextChip}
+              {briefing}
             </div>
-
-            {/* ExpandableTabs at bottom */}
-            <div className="p-2 border-t border-white/10 bg-white/5 flex-shrink-0">
-              <ExpandableTabs
-                tabs={[
-                  { title: "Save", icon: Bookmark },
-                  { title: "Share", icon: Share2 },
-                  { title: "Refresh", icon: RefreshCw }
-                ]}
-                className="w-full justify-center border-white/10 bg-white/5"
-                activeColor="text-primary"
-              />
-            </div>
-          </div>
-        ) : (
-          // Chat View - Full Height
-          <div className="h-full overflow-y-auto custom-scrollbar">
-            <AIAssistantInterface />
-          </div>
+            <div className="mt-2 flex min-h-0 flex-1 flex-col">{thread}</div>
+            <div className="relative shrink-0 border-t border-white/[.07] bg-black/10 p-3">{composer}</div>
+          </motion.aside>
         )}
-      </div>
-    </div>
+      </AnimatePresence>
+    </>
   );
 }

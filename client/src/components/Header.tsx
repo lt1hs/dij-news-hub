@@ -9,9 +9,11 @@ import { cn } from "@/lib/utils";
 
 interface HeaderProps {
   onPaneToggle?: () => void;
+  deskPinned?: boolean;
+  onSearchOpen?: () => void;
 }
 
-export default function Header({ onPaneToggle }: HeaderProps) {
+export default function Header({ onPaneToggle, deskPinned = false, onSearchOpen }: HeaderProps) {
   const { isAuthenticated } = useAuth();
   const { setMobileOpen, collapsed } = useSidebar();
   const [scrolled, setScrolled] = useState(false);
@@ -39,7 +41,11 @@ export default function Header({ onPaneToggle }: HeaderProps) {
         initial={false}
         animate={{ top: scrolled ? 8 : 16 }}
         transition={{ type: "spring", stiffness: 320, damping: 34 }}
-        className={cn("fixed z-[60] left-4 right-4 transition-[left] duration-300", collapsed ? "md:left-20" : "md:left-[236px]")}
+        className={cn(
+          "fixed z-[60] left-4 right-4 transition-[left,right] duration-300 ease-out",
+          collapsed ? "md:left-20" : "md:left-[236px]",
+          deskPinned && "lg:right-[400px]"
+        )}
       >
         <motion.div
           initial={{ y: -20, opacity: 0 }}
@@ -61,14 +67,16 @@ export default function Header({ onPaneToggle }: HeaderProps) {
               </motion.div>
               <div className="hidden sm:flex flex-col leading-none">
                 <span className="text-[17px] font-bold tracking-tight text-white transition-colors group-hover:text-sidebar-primary">
-                  News<span className="opacity-80">Fusion</span>
+                  DIJ<span className="text-sidebar-primary">AI</span>
                 </span>
-                {!scrolled && <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-widest mt-0.5">Engineered for Truth</span>}
+                {!scrolled && <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-widest mt-0.5">Intelligence desk</span>}
               </div>
             </a>
 
             <div className="flex flex-1 items-center justify-end gap-2">
               <motion.button
+                type="button"
+                onClick={onSearchOpen}
                 whileHover={{ scale: 1.02 }}
                 className={cn("hidden md:flex w-full items-center gap-3 bg-white/[0.05] border border-white/5 rounded-xl px-4 text-neutral-400 hover:text-white hover:bg-white/[0.08] transition-all group", scrolled ? "max-w-[260px] py-1.5" : "max-w-sm py-2")}
               >

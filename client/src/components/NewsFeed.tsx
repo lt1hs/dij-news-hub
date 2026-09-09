@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, type CSSProperties } from "react";
+import { useState, useEffect, useMemo, useRef, type CSSProperties } from "react";
 import { useQuery } from "@tanstack/react-query";
 import TopHeadlinesSlider from "./TopHeadlinesSlider";
 import CategoryBar from "./CategoryBar";
@@ -6,32 +6,45 @@ import NewsCard from "./NewsCard";
 import IntelligenceSidebar from "./IntelligenceSidebar";
 import AudioHub from "./AudioHub";
 import ArticleFocusMode from "./ArticleFocusMode";
-import DynamicPane from "./DynamicPane";
+import DynamicPane, { type DeskArticleContext, type DeskMode } from "./DynamicPane";
 import Sidebar from "./Sidebar";
 import TrackingView from "./TrackingView";
 import HeadlinesView from "./HeadlinesView";
+import LatestView from "./LatestView";
+import SavedView from "./SavedView";
+import NotificationsView from "./NotificationsView";
+import SettingsView from "./SettingsView";
+import ProfileView from "./ProfileView";
+import AudioLibraryView from "./AudioLibraryView";
+import CommandPalette, { type CommandItem } from "./CommandPalette";
 import { SymmetricWave } from "@/components/ui/symmetric-wave";
 import { useSidebar } from "@/hooks/useSidebar";
+import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-
 import { Article } from "@shared/schema";
 
 interface NewsFeedProps {
-  paneCompact: boolean;
-  setPaneCompact: (compact: boolean) => void;
+  deskMode: DeskMode;
+  setDeskMode: (mode: DeskMode) => void;
+  commandOpen: boolean;
+  setCommandOpen: (open: boolean) => void;
 }
 
-export default function NewsFeed({ paneCompact, setPaneCompact }: NewsFeedProps) {
+export default function NewsFeed({ deskMode, setDeskMode, commandOpen, setCommandOpen }: NewsFeedProps) {
   const { collapsed } = useSidebar();
+  const { toast } = useToast();
   const [activeView, setActiveView] = useState("explore");
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [focusArticle, setFocusArticle] = useState<Article | null>(null);
   const [isFocusOpen, setIsFocusOpen] = useState(false);
   const [isAudioOpen, setIsAudioOpen] = useState(false);
+  const [deskContext, setDeskContext] = useState<DeskArticleContext | null>(null);
+  const [pendingPrompt, setPendingPrompt] = useState<string | null>(null);
   const loaderRef = useRef<HTMLDivElement>(null);
+  const deskPinned = deskMode === "pinned";
 
-  const { data: articles = [], isLoading } = useQuery<Article[]>({
-    queryKey: ['/api/articles'],
+  const { data: articles = [] } = useQuery<Article[]>({
+    queryKey: ["/api/articles"],
     retry: false,
   });
 
@@ -49,10 +62,22 @@ export default function NewsFeed({ paneCompact, setPaneCompact }: NewsFeedProps)
     return () => observer.disconnect();
   }, [isLoadingMore]);
 
-  const handlePlayClick = (articleId: string) => {
-    setIsAudioOpen(true);
-    console.log(`Audio triggered for: ${articleId}`);
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [activeView]);
+
+  const openDeskWithArticle = (article: { id: string; title: string; summary?: string | null; sources?: string[] | null; category?: string | null }) => {
+    setDeskContext({
+      id: article.id,
+      title: article.title,
+      summary: article.summary || undefined,
+      sources: article.sources || undefined,
+      category: article.category || undefined,
+    });
+    setDeskMode(deskMode === "pinned" ? "pinned" : "float");
   };
+
+  const handlePlayClick = () => setIsAudioOpen(true);
 
   const handleArticleClick = (article: Article) => {
     setFocusArticle(article);
@@ -69,81 +94,162 @@ export default function NewsFeed({ paneCompact, setPaneCompact }: NewsFeedProps)
   };
 
   const calculateReadTime = (content: string) => {
-    const words = content?.split(' ').length || 100;
+    const words = content?.split(" ").length || 100;
     return `${Math.ceil(words / 200)} min`;
+  };
+
+  const commandItems = useMemo<CommandItem[]>(
+    () => [
+      { id: "explore", label: "For You", hint: "Personalized feed", group: "Navigate", onSelect: () => setActiveView("explore") },
+      { id: "headlines", label: "Headlines", hint: "Ranked briefing", group: "Navigate", onSelect: () => setActiveView("headlines") },
+      { id: "latest", label: "Latest", hint: "Chronological wires", group: "Navigate", onSelect: () => setActiveView("latest") },
+      { id: "tracking", label: "Tracking", hint: "Watchlists", group: "Navigate", onSelect: () => setActiveView("tracking") },
+      { id: "saved", label: "Saved", hint: "Reading queue", group: "Navigate", onSelect: () => setActiveView("saved") },
+      { id: "audio", label: "Audio & podcasts", hint: "Listen library", group: "Navigate", onSelect: () => setActiveView("audio") },
+      { id: "notifications", label: "Notifications", group: "Navigate", onSelect: () => setActiveView("notifications") },
+      { id: "settings", label: "Settings", group: "Navigate", onSelect: () => setActiveView("settings") },
+      { id: "profile", label: "Profile", group: "Navigate", onSelect: () => setActiveView("profile") },
+      { id: "desk", label: "Open intelligence desk", hint: "Ask about the news", group: "Desk", onSelect: () => setDeskMode("float") },
+      { id: "pin", label: "Pin desk to the right", group: "Desk", onSelect: () => setDeskMode("pinned") },
+      ...articles.slice(0, 8).map((article) => ({
+        id: `story-${article.id}`,
+        label: article.title,
+        hint: article.category,
+        group: "Stories",
+        onSelect: () => handleArticleClick(article),
+      })),
+    ],
+    [articles, setDeskMode]
+  );
+
+  const renderView = () => {
+    if (activeView === "tracking") return <TrackingView />;
+    if (activeView === "headlines") return <HeadlinesView articles={articles} onOpen={handleArticleClick} />;
+    if (activeView === "latest") return <LatestView articles={articles} onOpen={handleArticleClick} />;
+    if (activeView === "saved") {
+      return (
+        <SavedView
+          onOpen={(item) => {
+            const match = articles.find((article) => article.id === item.id);
+            if (match) handleArticleClick(match);
+            else toast({ title: item.title, description: "Open from Saved when the full article is in the current feed." });
+          }}
+          onAsk={(item) => openDeskWithArticle(item)}
+          onPlay={() => handlePlayClick()}
+        />
+      );
+    }
+    if (activeView === "notifications") {
+      return (
+        <NotificationsView
+          onOpenDesk={() => setDeskMode("float")}
+          onOpenTracking={() => setActiveView("tracking")}
+        />
+      );
+    }
+    if (activeView === "settings") return <SettingsView />;
+    if (activeView === "profile") return <ProfileView />;
+    if (activeView === "audio") return <AudioLibraryView onPlayEpisode={() => setIsAudioOpen(true)} />;
+
+    return (
+      <div className="pt-8 pb-28">
+        <div className="px-4">
+          <TopHeadlinesSlider />
+        </div>
+
+        <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
+          <CategoryBar />
+          <IntelligenceSidebar mobile className="mb-7 lg:hidden" />
+
+          <div
+            className={cn(
+              "grid grid-cols-1 items-start gap-7",
+              !deskPinned && "lg:grid-cols-[minmax(0,1fr)_340px] xl:grid-cols-[minmax(0,1fr)_360px] xl:gap-9"
+            )}
+          >
+            <section className="min-w-0" aria-label="Latest news">
+              <div className="mb-4 flex items-end justify-between gap-4">
+                <div>
+                  <h2 className="text-2xl font-semibold tracking-tight text-white">Latest news</h2>
+                  <p className="mt-1 text-xs text-neutral-500">Reporting from sources across your selected topics</p>
+                </div>
+                <button type="button" onClick={() => setActiveView("latest")} className="hidden text-xs font-medium text-neutral-400 transition hover:text-white sm:inline">
+                  View all
+                </button>
+              </div>
+              <div className="overflow-hidden rounded-xl border border-white/[.08] bg-[#0b121c]/55 divide-y divide-white/[.08]">
+                {articles.map((article: Article) => (
+                  <div key={article.id}>
+                    <NewsCard
+                      id={article.id}
+                      title={article.title}
+                      summary={article.summary}
+                      imageUrl={article.imageUrl || undefined}
+                      sources={article.sources || []}
+                      category={article.category}
+                      timestamp={formatTimestamp(article.publishedAt?.toString() || new Date().toISOString())}
+                      readTime={calculateReadTime(article.content || "")}
+                      likeCount={article.likeCount || 0}
+                      repostCount={article.repostCount || 0}
+                      replyCount={article.replyCount || 0}
+                      bookmarkCount={article.bookmarkCount || 0}
+                      onChatClick={() => openDeskWithArticle(article)}
+                      onPlayClick={() => handlePlayClick()}
+                      onShareClick={() =>
+                        toast({ title: "Link ready", description: "Share sheet will connect when publishing is enabled." })
+                      }
+                      onClick={() => handleArticleClick(article)}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              <div ref={loaderRef} className="flex min-h-24 items-center justify-center py-8">
+                {isLoadingMore && (
+                  <SymmetricWave className="text-base text-sidebar-primary" style={{ "--duration": "1.6s" } as CSSProperties} />
+                )}
+              </div>
+            </section>
+
+            {!deskPinned && <IntelligenceSidebar className="hidden lg:block" />}
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
     <div className={cn("relative min-h-screen bg-transparent text-foreground selection:bg-sidebar-primary/30 overflow-x-clip", isFocusOpen ? "z-[100]" : "z-10")}>
       <Sidebar activeView={activeView} onViewChange={setActiveView} />
 
-      <main className={cn("min-w-0 transition-[margin] duration-300", collapsed ? "md:ml-16" : "md:ml-[220px]")}>
-
-        {activeView === "tracking" ? (
-          <TrackingView />
-        ) : activeView === "headlines" ? (
-          <HeadlinesView articles={articles} onOpen={handleArticleClick} />
-        ) : (
-        <div className="pt-14 pb-28">
-          <div className="px-4">
-            <TopHeadlinesSlider />
-          </div>
-
-          <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-            <CategoryBar />
-
-            <IntelligenceSidebar mobile className="mb-7 lg:hidden" />
-
-            <div className="grid grid-cols-1 items-start gap-7 lg:grid-cols-[minmax(0,1fr)_340px] xl:grid-cols-[minmax(0,1fr)_360px] xl:gap-9">
-              <section className="min-w-0" aria-label="Latest news">
-                <div className="mb-4 flex items-end justify-between gap-4">
-                  <div>
-                    <h2 className="text-2xl font-semibold tracking-tight text-white">Latest news</h2>
-                    <p className="mt-1 text-xs text-neutral-500">Reporting from sources across your selected topics</p>
-                  </div>
-                  <button className="hidden text-xs font-medium text-neutral-400 transition hover:text-white sm:inline">View all</button>
-                </div>
-                <div className="overflow-hidden rounded-xl border border-white/[.08] bg-[#0b121c]/55 divide-y divide-white/[.08]">
-                  {articles.map((article: Article) => (
-                    <div key={article.id}>
-                      <NewsCard
-                        id={article.id}
-                        title={article.title}
-                        summary={article.summary}
-                        imageUrl={article.imageUrl || undefined}
-                        sources={article.sources || []}
-                        category={article.category}
-                        timestamp={formatTimestamp(article.publishedAt?.toString() || new Date().toISOString())}
-                        readTime={calculateReadTime(article.content || '')}
-                        likeCount={article.likeCount || 0}
-                        repostCount={article.repostCount || 0}
-                        replyCount={article.replyCount || 0}
-                        bookmarkCount={article.bookmarkCount || 0}
-                        onChatClick={() => setPaneCompact(false)}
-                        onPlayClick={() => handlePlayClick(article.id)}
-                        onShareClick={() => console.log('Share Triggered')}
-                        onClick={() => handleArticleClick(article)}
-                      />
-                    </div>
-                  ))}
-                </div>
-
-                <div ref={loaderRef} className="flex min-h-24 items-center justify-center py-8">
-                  {isLoadingMore && (
-                    <SymmetricWave className="text-base text-sidebar-primary" style={{ "--duration": "1.6s" } as CSSProperties} />
-                  )}
-                </div>
-              </section>
-
-              <IntelligenceSidebar className="hidden lg:block" />
-            </div>
-          </div>
-        </div>
+      <main
+        className={cn(
+          "min-w-0 transition-[margin,padding] duration-300 ease-out",
+          collapsed ? "md:ml-16" : "md:ml-[220px]",
+          deskPinned && "lg:pr-[392px]"
         )}
+      >
+        {renderView()}
 
-        <DynamicPane isCompact={paneCompact} onToggleCompact={() => setPaneCompact(!paneCompact)} />
+        <DynamicPane
+          mode={deskMode}
+          onModeChange={setDeskMode}
+          contextArticle={deskContext}
+          onClearContext={() => setDeskContext(null)}
+          pendingPrompt={pendingPrompt}
+          onConsumePrompt={() => setPendingPrompt(null)}
+        />
         <AudioHub isOpen={isAudioOpen} onClose={() => setIsAudioOpen(false)} />
-        <ArticleFocusMode isOpen={isFocusOpen} onClose={() => setIsFocusOpen(false)} article={focusArticle} />
+        <ArticleFocusMode
+          isOpen={isFocusOpen}
+          onClose={() => setIsFocusOpen(false)}
+          article={focusArticle}
+          onAskDesk={(article, question) => {
+            openDeskWithArticle(article);
+            if (question) setPendingPrompt(question);
+          }}
+        />
+        <CommandPalette open={commandOpen} onClose={() => setCommandOpen(false)} items={commandItems} />
       </main>
     </div>
   );
