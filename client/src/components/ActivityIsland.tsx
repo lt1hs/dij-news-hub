@@ -13,7 +13,7 @@ interface ActivityIslandProps {
   onCloseAudio: () => void;
 }
 
-const spring = { type: "spring" as const, stiffness: 420, damping: 34, mass: 0.78 };
+const spring = { type: "spring" as const, stiffness: 220, damping: 26, mass: 0.85 };
 
 export default function ActivityIsland({
   deskCompact,
@@ -37,21 +37,21 @@ export default function ActivityIsland({
   return (
     <div
       className={cn(
-        "fixed z-[90] bottom-5 left-1/2 -translate-x-1/2 will-change-transform",
-        "transition-[left,width] duration-300 ease-out",
+        "fixed z-[90] bottom-5 left-1/2 -translate-x-1/2",
         both ? "w-[min(620px,calc(100vw-1.5rem))]" : "w-[min(540px,calc(100vw-1.5rem))]",
         collapsed ? "md:left-[calc(50%+2rem)]" : "md:left-[calc(50%+110px)]"
       )}
     >
       <motion.div
         layout
+        layoutId={showDesk && !showAudio ? "desk-shell" : undefined}
         transition={reduceMotion ? { duration: 0.16 } : spring}
         className={cn(
           "relative overflow-hidden border border-foreground/[.12] bg-chrome/94 shadow-[0_16px_40px_rgba(15,23,42,.10)] dark:shadow-[0_16px_44px_rgba(0,0,0,.5)] backdrop-blur-xl",
           both ? "flex h-[54px] items-stretch rounded-[28px]" : "rounded-full"
         )}
       >
-        <div className="pointer-events-none absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-foreground/22 to-transparent" />
+        <div className="pointer-events-none absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-white to-transparent dark:via-foreground/22" />
         {both && (
           <div className="pointer-events-none absolute -top-3 left-1/2 h-5 w-36 -translate-x-1/2 rounded-full bg-sidebar-primary/15 blur-md" />
         )}
@@ -158,16 +158,22 @@ export default function ActivityIsland({
                 both ? "flex-1 px-2.5" : "h-12 w-full px-2 pl-3"
               )}
             >
-              <span className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sidebar-primary/15 ring-1 ring-sidebar-primary/30">
+              <motion.span
+                layoutId={showAudio ? undefined : "desk-mark"}
+                className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sidebar-primary/15 ring-1 ring-sidebar-primary/30"
+              >
                 {!reduceMotion && !both && (
                   <span className="absolute inset-0 animate-ping rounded-full bg-sidebar-primary/20 opacity-20 [animation-duration:2.6s]" />
                 )}
                 <Sparkles className="relative h-3.5 w-3.5 text-sidebar-primary" />
-              </span>
+              </motion.span>
               <span className="min-w-0 flex-1">
-                <span className="block text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground dark:text-neutral-500">
+                <motion.span
+                  layoutId={showAudio ? undefined : "desk-title"}
+                  className="block text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground dark:text-neutral-500"
+                >
                   {both ? "Desk" : "Intelligence desk"}
-                </span>
+                </motion.span>
                 <span className="block truncate text-[13px] text-muted-foreground dark:text-neutral-300 transition group-hover:text-foreground dark:group-hover:text-white">
                   {both ? "Ask…" : "Ask about today’s news…"}
                 </span>

@@ -62,7 +62,7 @@ export default function DynamicPane({ mode, onModeChange, contextArticle = null,
 
   const spring = reduceMotion
     ? { type: "tween" as const, duration: 0.16 }
-    : { type: "spring" as const, stiffness: 440, damping: 38, mass: 0.72 };
+    : { type: "spring" as const, stiffness: 220, damping: 26, mass: 0.85 };
 
   useEffect(() => {
     listRef.current?.scrollTo({

@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useRef, type CSSProperties } from "react";
+import { LayoutGroup } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import TopHeadlinesSlider from "./TopHeadlinesSlider";
 import CategoryBar from "./CategoryBar";
@@ -239,29 +240,31 @@ export default function NewsFeed({ deskMode, setDeskMode, commandOpen, setComman
       >
         {renderView()}
 
-        <DynamicPane
-          mode={deskMode}
-          onModeChange={setDeskMode}
-          contextArticle={deskContext}
-          onClearContext={() => setDeskContext(null)}
-          pendingPrompt={pendingPrompt}
-          onConsumePrompt={() => setPendingPrompt(null)}
-        />
-        <ActivityIsland
-          deskCompact={deskMode === "compact"}
-          audioOpen={isAudioOpen && !isAudioExpanded}
-          audioPlaying={isAudioPlaying}
-          onOpenDesk={() => {
-            setIsAudioExpanded(false);
-            setDeskMode("float");
-          }}
-          onToggleAudioPlay={() => setIsAudioPlaying((playing) => !playing)}
-          onExpandAudio={() => setIsAudioExpanded(true)}
-          onCloseAudio={() => {
-            setIsAudioOpen(false);
-            setIsAudioExpanded(false);
-          }}
-        />
+        <LayoutGroup id="intelligence-desk">
+          <DynamicPane
+            mode={deskMode}
+            onModeChange={setDeskMode}
+            contextArticle={deskContext}
+            onClearContext={() => setDeskContext(null)}
+            pendingPrompt={pendingPrompt}
+            onConsumePrompt={() => setPendingPrompt(null)}
+          />
+          <ActivityIsland
+            deskCompact={deskMode === "compact"}
+            audioOpen={isAudioOpen && !isAudioExpanded}
+            audioPlaying={isAudioPlaying}
+            onOpenDesk={() => {
+              setIsAudioExpanded(false);
+              setDeskMode("float");
+            }}
+            onToggleAudioPlay={() => setIsAudioPlaying((playing) => !playing)}
+            onExpandAudio={() => setIsAudioExpanded(true)}
+            onCloseAudio={() => {
+              setIsAudioOpen(false);
+              setIsAudioExpanded(false);
+            }}
+          />
+        </LayoutGroup>
         <AudioHub
           isOpen={isAudioOpen}
           expanded={isAudioExpanded}
