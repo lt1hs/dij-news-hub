@@ -1,4 +1,5 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { BorderBeam } from "border-beam";
 import { ArrowUp, AudioLines, Pause, Play, Sparkles, X } from "lucide-react";
 import { useSidebar } from "@/hooks/useSidebar";
 import { cn } from "@/lib/utils";
@@ -42,15 +43,16 @@ export default function ActivityIsland({
         collapsed ? "md:left-[calc(50%+2rem)]" : "md:left-[calc(50%+110px)]"
       )}
     >
-      <motion.div
-        layout
-        layoutId={showDesk && !showAudio ? "desk-shell" : undefined}
-        transition={reduceMotion ? { duration: 0.16 } : spring}
-        className={cn(
-          "relative overflow-hidden border border-foreground/[.12] bg-chrome/94 shadow-[0_16px_40px_rgba(15,23,42,.10)] dark:shadow-[0_16px_44px_rgba(0,0,0,.5)] backdrop-blur-xl",
-          both ? "flex h-[54px] items-stretch rounded-[28px]" : "rounded-full"
-        )}
-      >
+      <BorderBeam size="line">
+        <motion.div
+          layout
+          layoutId={showDesk && !showAudio ? "desk-shell" : undefined}
+          transition={reduceMotion ? { duration: 0.16 } : spring}
+          className={cn(
+            "relative overflow-hidden border border-foreground/[.12] bg-chrome/94 shadow-[0_16px_40px_rgba(15,23,42,.10)] dark:shadow-[0_16px_44px_rgba(0,0,0,.5)] backdrop-blur-xl",
+            both ? "flex h-[54px] items-stretch rounded-[28px]" : "rounded-full"
+          )}
+        >
         <div className="pointer-events-none absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-white to-transparent dark:via-foreground/22" />
         {both && (
           <div className="pointer-events-none absolute -top-3 left-1/2 h-5 w-36 -translate-x-1/2 rounded-full bg-sidebar-primary/15 blur-md" />
@@ -187,7 +189,8 @@ export default function ActivityIsland({
             </motion.button>
           )}
         </AnimatePresence>
-      </motion.div>
+        </motion.div>
+      </BorderBeam>
     </div>
   );
 }

@@ -87,6 +87,10 @@
   --desk-shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
   --desk-shadow-lg: 0 28px 80px rgba(15, 23, 42, 0.12);
   --pixel-canvas-opacity: 0.42;
+  --matrix-cycle: 1200ms;
+  --matrix-base: #3a3a3e;
+  --matrix-active: #b8b8c2;
+  --matrix-ease: ease-in-out;
 
   --font-sans: Inter, system-ui, -apple-system, sans-serif;
   --font-serif: Georgia, serif;
@@ -400,6 +404,41 @@
 
   .desk-shadow-lg {
     box-shadow: var(--desk-shadow-lg);
+  }
+
+  .t-matrix {
+    display: grid;
+    grid-template-columns: repeat(4, 2px);
+    grid-auto-rows: 2px;
+    gap: 2px;
+  }
+
+  .t-matrix i {
+    display: block;
+    background: var(--matrix-base);
+    animation: t-matrix-pulse var(--matrix-cycle) var(--matrix-ease) infinite;
+    animation-delay: calc(var(--d, 0) * 1ms);
+  }
+
+  .t-matrix i.is-gap {
+    visibility: hidden;
+    animation: none;
+  }
+
+  @keyframes t-matrix-pulse {
+    0%, 45%, 100% {
+      background-color: var(--matrix-base);
+    }
+
+    15% {
+      background-color: var(--matrix-active);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .t-matrix i {
+      animation: none !important;
+    }
   }
 
   .pixel-stage {

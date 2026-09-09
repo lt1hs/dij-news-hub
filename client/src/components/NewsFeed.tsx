@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef, type CSSProperties } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { LayoutGroup } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import TopHeadlinesSlider from "./TopHeadlinesSlider";
@@ -19,7 +19,7 @@ import SettingsView from "./SettingsView";
 import ProfileView from "./ProfileView";
 import AudioLibraryView from "./AudioLibraryView";
 import CommandPalette, { type CommandItem } from "./CommandPalette";
-import { SymmetricWave } from "@/components/ui/symmetric-wave";
+import { MatrixLoader } from "@/components/ui/matrix-loader";
 import { useSidebar } from "@/hooks/useSidebar";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -214,9 +214,7 @@ export default function NewsFeed({ deskMode, setDeskMode, commandOpen, setComman
               </div>
 
               <div ref={loaderRef} className="flex min-h-24 items-center justify-center py-8">
-                {isLoadingMore && (
-                  <SymmetricWave className="text-base text-sidebar-primary" style={{ "--duration": "1.6s" } as CSSProperties} />
-                )}
+                {isLoadingMore && <MatrixLoader />}
               </div>
             </section>
 
