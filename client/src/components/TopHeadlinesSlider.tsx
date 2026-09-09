@@ -86,7 +86,7 @@ export default function TopHeadlinesSlider() {
 
   return (
     <div
-      className="relative w-full rounded-[15px] border border-white/10 bg-black/20 backdrop-blur-md overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] h-[440px] sm:h-[460px] flex group"
+      className="relative w-full rounded-[15px] border border-foreground/10 bg-chrome overflow-hidden shadow-[0_16px_40px_rgba(15,23,42,0.08)] dark:bg-black/20 dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] h-[440px] sm:h-[460px] flex group"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -96,18 +96,18 @@ export default function TopHeadlinesSlider() {
           <motion.div
             key={activeStory.id}
             initial={{ opacity: 0, scale: 1.1 }}
-            animate={{ opacity: 0.4, scale: 1 }}
+            animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 1, ease: "easeOut" }}
-            className="absolute inset-0"
+            className="absolute inset-0 headline-media"
           >
             <img
               src={activeStory.image}
               alt=""
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover opacity-50 dark:opacity-40"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-black via-black/40 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/10 dark:from-black dark:via-black/40 dark:to-transparent rtl:bg-gradient-to-l" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
           </motion.div>
         </AnimatePresence>
       </div>
@@ -116,7 +116,7 @@ export default function TopHeadlinesSlider() {
       <div className="relative z-10 w-full flex h-full">
 
         {/* Left Section: Active Detail (65%) */}
-        <div className="w-full md:w-[65%] flex flex-col justify-between p-5 sm:p-8">
+        <div className="on-media w-full md:w-[65%] flex flex-col justify-between p-5 sm:p-8">
           {/* Top Label */}
           <motion.div
             initial={{ opacity: 0, y: -10 }}
@@ -127,7 +127,7 @@ export default function TopHeadlinesSlider() {
               <TrendingUp size={12} />
               Featured Intelligence
             </div>
-            <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-widest flex items-center gap-1.5">
+            <span className="text-[10px] text-white/70 font-bold uppercase tracking-widest flex items-center gap-1.5">
               <span className="h-1 w-1 rounded-full bg-red-500 animate-pulse" />
               Real-time update
             </span>
@@ -145,8 +145,8 @@ export default function TopHeadlinesSlider() {
               >
                 <div className="flex items-center gap-2 mb-3">
                   <span className="text-xs font-bold text-sidebar-primary uppercase tracking-wider">{activeStory.source}</span>
-                  <span className="h-1 w-1 rounded-full bg-white/20" />
-                  <span className="text-[10px] text-neutral-400 font-medium flex items-center gap-1">
+                  <span className="h-1 w-1 rounded-full bg-white/30" />
+                  <span className="text-[10px] text-white/70 font-medium flex items-center gap-1">
                     <Clock size={12} />
                     {activeStory.timeAgo}
                   </span>
@@ -156,7 +156,7 @@ export default function TopHeadlinesSlider() {
                   {activeStory.title}
                 </h1>
 
-                <p className="text-sm text-neutral-300 leading-relaxed mb-6 line-clamp-3 sm:line-clamp-2 opacity-90">
+                <p className="text-sm text-white/80 leading-relaxed mb-6 line-clamp-3 sm:line-clamp-2">
                   {activeStory.description}
                 </p>
 
@@ -166,9 +166,9 @@ export default function TopHeadlinesSlider() {
                     whileTap={{ scale: 0.95 }}
                     className="px-5 sm:px-6 py-2.5 rounded-xl bg-sidebar-primary text-white text-xs font-bold shadow-lg shadow-sidebar-primary/20 hover:shadow-sidebar-primary/40 transition-all flex items-center gap-2"
                   >
-                    Deep Analysis <ArrowRight size={14} />
+                    Deep Analysis <ArrowRight size={14} className="rtl-flip" />
                   </motion.button>
-                  <button className="p-2 rounded-xl border border-white/5 bg-white/5 text-white/50 hover:text-white transition-all">
+                  <button className="p-2 rounded-xl border border-white/15 bg-white/10 text-white/70 hover:text-white transition-all">
                     <Maximize2 size={16} />
                   </button>
                 </div>
@@ -184,7 +184,7 @@ export default function TopHeadlinesSlider() {
                 onClick={() => setActiveIndex(i)}
                 className={cn(
                   "h-1 rounded-full transition-all duration-500",
-                  i === activeIndex ? "w-10 bg-sidebar-primary" : "w-2 bg-white/10 hover:bg-white/30"
+                  i === activeIndex ? "w-10 bg-sidebar-primary" : "w-2 bg-white/25 hover:bg-white/50"
                 )}
               />
             ))}
@@ -192,58 +192,58 @@ export default function TopHeadlinesSlider() {
         </div>
 
         {/* Right Section: Navigation Rail (35%) */}
-        <div className="hidden md:flex w-[35%] border-l border-white/5 bg-white/[0.01] backdrop-blur-xl flex-col p-4 gap-3">
+        <div className="hidden md:flex w-[35%] border-s border-foreground/10 bg-chrome/90 dark:bg-foreground/[0.01] backdrop-blur-xl flex-col p-4 gap-3">
           <div className="flex items-center justify-between mb-2 px-1">
-            <h4 className="text-[10px] font-bold text-neutral-500 uppercase tracking-[0.2em] flex items-center gap-1.5">
+            <h4 className="text-[10px] font-bold text-muted-foreground dark:text-neutral-500 uppercase tracking-[0.2em] flex items-center gap-1.5">
               <Sparkles size={12} className="text-sidebar-primary" />
               Incoming Feed
             </h4>
             <div className="flex items-center gap-1">
               <div className="h-1.5 w-1.5 rounded-full bg-sidebar-primary animate-pulse" />
-              <span className="text-[9px] font-bold text-neutral-600 uppercase">Live</span>
+              <span className="text-[9px] font-bold text-muted-foreground/80 dark:text-neutral-600 uppercase">Live</span>
             </div>
           </div>
 
-          <div className="flex-1 flex flex-col gap-2.5 overflow-y-auto custom-scrollbar pr-1">
+          <div className="flex-1 flex flex-col gap-2.5 overflow-y-auto custom-scrollbar pe-1">
             {HEADLINES.map((story, i) => (
               <button
                 key={story.id}
                 onClick={() => setActiveIndex(i)}
                 className={cn(
-                  "relative flex flex-col p-3 rounded-xl border transition-all duration-300 text-left group/item",
+                  "relative flex flex-col p-3 rounded-xl border transition-all duration-300 text-start group/item",
                   i === activeIndex
-                    ? "bg-white/[0.06] border-white/10 shadow-lg"
-                    : "bg-transparent border-transparent hover:bg-white/[0.03] text-neutral-400 hover:text-white"
+                    ? "bg-foreground/[0.06] border-foreground/10 shadow-lg"
+                    : "bg-transparent border-transparent hover:bg-foreground/[0.03] text-muted-foreground dark:text-neutral-400 hover:text-foreground dark:hover:text-white"
                 )}
               >
                 {i === activeIndex && (
                   <motion.div
                     layoutId="rail-active-indicator"
-                    className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-sidebar-primary rounded-r-full shadow-[2px_0_8px_rgba(59,130,246,0.6)]"
+                    className="absolute start-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-sidebar-primary rounded-e-full shadow-[2px_0_8px_rgba(59,130,246,0.6)] rtl:shadow-[-2px_0_8px_rgba(59,130,246,0.6)]"
                   />
                 )}
 
                 <div className="flex items-center gap-2 mb-1.5">
                   <span className={cn(
-                    "inline-flex items-center gap-1 rounded bg-white/5 border border-white/10 px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider",
-                    i === activeIndex ? "text-sidebar-primary border-sidebar-primary/30" : "text-neutral-500"
+                    "inline-flex items-center gap-1 rounded bg-foreground/5 border border-foreground/10 px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider",
+                    i === activeIndex ? "text-sidebar-primary border-sidebar-primary/30" : "text-muted-foreground dark:text-neutral-500"
                   )}>
                     {getCategoryIcon(story.category)}
                     {story.category}
                   </span>
-                  <span className="text-[8px] font-bold text-neutral-600 uppercase">{story.timeAgo}</span>
+                  <span className="text-[8px] font-bold text-muted-foreground/80 dark:text-neutral-600 uppercase">{story.timeAgo}</span>
                 </div>
 
                 <h5 className={cn(
                   "text-[11px] font-bold leading-snug transition-all line-clamp-2",
-                  i === activeIndex ? "text-white" : "text-neutral-500 group-hover/item:text-neutral-300"
+                  i === activeIndex ? "text-foreground dark:text-white" : "text-muted-foreground dark:text-neutral-500 group-hover/item:text-foreground dark:group-hover/item:text-neutral-300"
                 )}>
                   {story.title}
                 </h5>
 
                 {/* Progress bar for auto-cycling (only on active) */}
                 {i === activeIndex && (
-                  <div className="mt-3 h-[1px] w-full bg-white/5 overflow-hidden">
+                  <div className="mt-3 h-[1px] w-full bg-foreground/5 overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: "100%" }}
@@ -258,8 +258,8 @@ export default function TopHeadlinesSlider() {
           </div>
 
           {/* Footer of the rail */}
-          <button className="flex items-center justify-center gap-2 p-2 rounded-lg border border-white/5 bg-white/[0.02] text-[9px] font-bold text-neutral-500 hover:text-white transition-all uppercase tracking-widest mt-auto">
-            View All Reports <ChevronRight size={12} />
+          <button className="flex items-center justify-center gap-2 p-2 rounded-lg border border-foreground/5 bg-foreground/[0.02] text-[9px] font-bold text-muted-foreground dark:text-neutral-500 hover:text-foreground dark:hover:text-white transition-all uppercase tracking-widest mt-auto">
+            View All Reports <ChevronRight size={12} className="rtl-flip" />
           </button>
         </div>
 

@@ -5,6 +5,8 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider } from "@/hooks/useSidebar";
+import { LanguageProvider } from "@/i18n/LanguageProvider";
+import { ThemeProvider } from "@/hooks/useTheme";
 import { useAuth } from "@/hooks/useAuth";
 import Header from "@/components/Header";
 import NewsFeed from "@/components/NewsFeed";
@@ -63,28 +65,38 @@ function App() {
   }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <SidebarProvider>
-          <div className="min-h-screen relative">
-            <PixelBackground />
-            <Header
-              deskPinned={deskMode === "pinned"}
-              onSearchOpen={() => setCommandOpen(true)}
-              onPaneToggle={() => setDeskMode((mode) => (mode === "compact" ? "float" : "compact"))}
-            />
-            <Router
-              deskMode={deskMode}
-              setDeskMode={setDeskMode}
-              commandOpen={commandOpen}
-              setCommandOpen={setCommandOpen}
-            />
-          </div>
-        </SidebarProvider>
-        <Toaster />
-      </TooltipProvider>
-    </QueryClientProvider>
+    <ThemeProvider>
+      <LanguageProvider>
+        <QueryClientProvider client={queryClient}>
+          <TooltipProvider>
+            <SidebarProvider>
+              <div className="min-h-screen relative">
+                <PixelBackground />
+                <Header
+                  deskPinned={deskMode === "pinned"}
+                  onSearchOpen={() => setCommandOpen(true)}
+                  onPaneToggle={() =>
+                    setDeskMode((mode) => {
+                      if (mode === "compact") return "float";
+                      return "compact";
+                    })
+                  }
+                />
+                <Router
+                  deskMode={deskMode}
+                  setDeskMode={setDeskMode}
+                  commandOpen={commandOpen}
+                  setCommandOpen={setCommandOpen}
+                />
+              </div>
+            </SidebarProvider>
+            <Toaster />
+          </TooltipProvider>
+        </QueryClientProvider>
+      </LanguageProvider>
+    </ThemeProvider>
   );
 }
 
 export default App;
+

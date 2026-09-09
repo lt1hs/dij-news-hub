@@ -76,38 +76,38 @@ export default function NewsCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-24px" }}
       transition={{ duration: 0.28 }}
-      className="group grid min-h-[178px] grid-cols-[minmax(0,1fr)_112px] bg-transparent transition-colors hover:bg-white/[.022] sm:min-h-[204px] sm:grid-cols-[minmax(0,1fr)_210px]"
+      className="group grid min-h-[178px] grid-cols-[minmax(0,1fr)_112px] bg-transparent transition-colors hover:bg-foreground/[.022] sm:min-h-[204px] sm:grid-cols-[minmax(0,1fr)_210px]"
     >
       <div className="flex min-w-0 flex-col p-4 sm:p-5">
-        <div className="mb-2.5 flex min-w-0 items-center gap-2 text-[11px] text-neutral-500">
-          <span className="truncate font-semibold text-neutral-300">{source}</span>
+        <div className="mb-2.5 flex min-w-0 items-center gap-2 text-[11px] text-muted-foreground dark:text-neutral-500">
+          <span className="truncate font-semibold text-muted-foreground dark:text-neutral-300">{source}</span>
           <span className="h-0.5 w-0.5 shrink-0 rounded-full bg-neutral-600" />
           <span className="shrink-0 text-sidebar-primary">{category}</span>
-          <ShieldCheck size={12} className="shrink-0 text-neutral-600" aria-label="Verified source" />
+          <ShieldCheck size={12} className="shrink-0 text-muted-foreground/80 dark:text-neutral-600" aria-label="Verified source" />
         </div>
 
         <button onClick={onClick} className="text-left">
-          <h3 className="line-clamp-3 text-[17px] font-semibold leading-[1.3] tracking-[-.01em] text-neutral-100 transition-colors group-hover:text-white sm:line-clamp-2 sm:text-xl">
+          <h3 className="line-clamp-3 text-[17px] font-semibold leading-[1.3] tracking-[-.01em] text-foreground dark:text-neutral-100 transition-colors group-hover:text-foreground dark:group-hover:text-white sm:line-clamp-2 sm:text-xl">
             {title}
           </h3>
         </button>
 
-        <p className="mt-2 hidden line-clamp-2 text-[13px] leading-5 text-neutral-500 sm:block">
+        <p className="mt-2 hidden line-clamp-2 text-[13px] leading-5 text-muted-foreground dark:text-neutral-500 sm:block">
           {summary || "Read the full report for context, supporting sources, and the latest developments."}
         </p>
 
         <div className="mt-auto flex items-center justify-between gap-2 pt-3">
-          <div className="flex items-center gap-1.5 whitespace-nowrap text-[10px] text-neutral-600 sm:text-[11px]">
+          <div className="flex items-center gap-1.5 whitespace-nowrap text-[10px] text-muted-foreground/80 dark:text-neutral-600 sm:text-[11px]">
             <Clock3 size={12} />
             <span>{timestamp}</span>
             <span className="hidden sm:inline">· {readTime} read</span>
           </div>
 
           <div className="flex items-center gap-0.5">
-            <button onClick={() => onPlayClick(id)} aria-label="Listen to article" className="flex h-8 w-8 items-center justify-center rounded-md text-neutral-500 transition hover:bg-white/[.05] hover:text-white">
+            <button onClick={() => onPlayClick(id)} aria-label="Listen to article" className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground dark:text-neutral-500 transition hover:bg-foreground/[.05] hover:text-foreground dark:hover:text-white">
               <Headphones size={14} />
             </button>
-            <button onClick={() => onChatClick(id)} aria-label="Analyze article" className="flex h-8 items-center gap-1.5 rounded-md px-2 text-neutral-400 transition hover:bg-white/[.05] hover:text-white">
+            <button onClick={() => onChatClick(id)} aria-label="Analyze article" className="flex h-8 items-center gap-1.5 rounded-md px-2 text-muted-foreground dark:text-neutral-400 transition hover:bg-foreground/[.05] hover:text-foreground dark:hover:text-white">
               <Sparkles size={14} />
               <span className="hidden text-[11px] font-medium md:inline">Analyze</span>
             </button>
@@ -116,15 +116,15 @@ export default function NewsCard({
               aria-label="Bookmark article"
               className={cn(
                 "hidden h-8 w-8 items-center justify-center rounded-md transition sm:flex",
-                bookmarked ? "text-sidebar-primary" : "text-neutral-500 hover:bg-white/[.05] hover:text-white"
+                bookmarked ? "text-sidebar-primary" : "text-muted-foreground dark:text-neutral-500 hover:bg-foreground/[.05] hover:text-foreground dark:hover:text-white"
               )}
             >
               <Bookmark size={14} className={bookmarked ? "fill-current" : ""} />
             </button>
-            <button onClick={() => onShareClick(id)} aria-label="Share article" className="hidden h-8 w-8 items-center justify-center rounded-md text-neutral-500 transition hover:bg-white/[.05] hover:text-white md:flex">
+            <button onClick={() => onShareClick(id)} aria-label="Share article" className="hidden h-8 w-8 items-center justify-center rounded-md text-muted-foreground dark:text-neutral-500 transition hover:bg-foreground/[.05] hover:text-foreground dark:hover:text-white md:flex">
               <Share2 size={14} />
             </button>
-            <button aria-label="More options" className="flex h-8 w-8 items-center justify-center rounded-md text-neutral-600 transition hover:bg-white/[.05] hover:text-white">
+            <button aria-label="More options" className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground/80 dark:text-neutral-600 transition hover:bg-foreground/[.05] hover:text-foreground dark:hover:text-white">
               <MoreHorizontal size={15} />
             </button>
           </div>
@@ -133,7 +133,7 @@ export default function NewsCard({
 
       <button onClick={onClick} className="relative m-3 ml-0 overflow-hidden rounded-lg bg-neutral-900 text-left sm:m-4 sm:ml-0">
         <img src={displayImage} alt="" className="h-full w-full object-cover opacity-80 transition duration-500 group-hover:scale-[1.025] group-hover:opacity-100" />
-        <span className="absolute bottom-2 right-2 flex h-7 w-7 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white backdrop-blur-sm sm:hidden">
+        <span className="absolute bottom-2 right-2 flex h-7 w-7 items-center justify-center rounded-full border border-foreground/15 bg-black/55 text-foreground dark:text-white backdrop-blur-sm sm:hidden">
           <Headphones size={12} />
         </span>
       </button>

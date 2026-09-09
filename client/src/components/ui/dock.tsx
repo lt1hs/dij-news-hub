@@ -109,7 +109,7 @@ function Dock({
           mouseX.set(Infinity);
         }}
         className={cn(
-          'mx-auto flex w-fit gap-2 rounded-lg border border-white/10 bg-white/5 backdrop-blur-sm px-2',
+          'mx-auto flex w-fit gap-2 rounded-lg border border-foreground/10 bg-foreground/5 backdrop-blur-sm px-2',
           className
         )}
         style={{ height: panelHeight }}
@@ -183,7 +183,7 @@ function DockLabel({ children, className, ...rest }: DockLabelProps) {
           exit={{ opacity: 0, y: 0 }}
           transition={{ duration: 0.15 }}
           className={cn(
-            'absolute -top-8 left-1/2 whitespace-nowrap rounded-md border border-white/10 bg-white/10 backdrop-blur-sm px-2 py-1 text-xs text-foreground',
+            'absolute -top-8 left-1/2 whitespace-nowrap rounded-md border border-foreground/10 bg-foreground/10 backdrop-blur-sm px-2 py-1 text-xs text-foreground',
             className
           )}
           style={{ x: '-50%' }}

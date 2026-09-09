@@ -65,7 +65,7 @@ export default function CommandPalette({ open, onClose, items }: CommandPaletteP
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[90] bg-[#04070c]/55 backdrop-blur-[2px]"
+            className="fixed inset-0 z-[90] bg-chrome-overlay/55 backdrop-blur-[2px]"
             onClick={onClose}
           />
           <motion.div
@@ -75,10 +75,10 @@ export default function CommandPalette({ open, onClose, items }: CommandPaletteP
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.98 }}
             transition={{ type: "spring", stiffness: 420, damping: 36 }}
-            className="fixed left-1/2 top-[18%] z-[95] w-[min(560px,calc(100vw-1.5rem))] -translate-x-1/2 overflow-hidden rounded-2xl border border-white/[.12] bg-[#0a1018]/96 shadow-[0_30px_90px_rgba(0,0,0,.55)] backdrop-blur-xl"
+            className="fixed left-1/2 top-[18%] z-[95] w-[min(560px,calc(100vw-1.5rem))] -translate-x-1/2 overflow-hidden rounded-2xl border border-foreground/[.12] bg-chrome-deep/96 shadow-[0_24px_60px_rgba(15,23,42,.12)] dark:shadow-[0_30px_90px_rgba(0,0,0,.55)] backdrop-blur-xl"
           >
-            <div className="flex items-center gap-3 border-b border-white/[.08] px-4 py-3">
-              <Search size={16} className="text-neutral-500" />
+            <div className="flex items-center gap-3 border-b border-foreground/[.08] px-4 py-3">
+              <Search size={16} className="text-muted-foreground dark:text-neutral-500" />
               <input
                 autoFocus
                 value={query}
@@ -87,15 +87,15 @@ export default function CommandPalette({ open, onClose, items }: CommandPaletteP
                   setActive(0);
                 }}
                 placeholder="Jump to a view, open the desk, search stories…"
-                className="min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-neutral-600"
+                className="min-w-0 flex-1 bg-transparent text-sm text-foreground dark:text-white outline-none placeholder:text-muted-foreground"
               />
-              <span className="hidden items-center gap-1 rounded border border-white/10 bg-black/30 px-1.5 py-0.5 text-[10px] text-neutral-500 sm:flex">
+              <span className="hidden items-center gap-1 rounded border border-foreground/10 bg-black/30 px-1.5 py-0.5 text-[10px] text-muted-foreground dark:text-neutral-500 sm:flex">
                 <Command size={10} />K
               </span>
             </div>
             <div className="max-h-[360px] overflow-y-auto p-2 custom-scrollbar">
               {filtered.length === 0 ? (
-                <p className="px-3 py-8 text-center text-sm text-neutral-500">No matches</p>
+                <p className="px-3 py-8 text-center text-sm text-muted-foreground dark:text-neutral-500">No matches</p>
               ) : (
                 filtered.map((item, index) => (
                   <button
@@ -108,14 +108,14 @@ export default function CommandPalette({ open, onClose, items }: CommandPaletteP
                     }}
                     className={cn(
                       "flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-left transition",
-                      index === active ? "bg-white/[.06] text-white" : "text-neutral-400 hover:bg-white/[.03]"
+                      index === active ? "bg-foreground/[.06] text-foreground dark:text-white" : "text-muted-foreground dark:text-neutral-400 hover:bg-foreground/[.03]"
                     )}
                   >
                     <span>
                       <span className="block text-sm font-medium">{item.label}</span>
-                      {item.hint && <span className="mt-0.5 block text-[11px] text-neutral-600">{item.hint}</span>}
+                      {item.hint && <span className="mt-0.5 block text-[11px] text-muted-foreground/80 dark:text-neutral-600">{item.hint}</span>}
                     </span>
-                    <span className="text-[10px] uppercase tracking-[0.14em] text-neutral-600">{item.group}</span>
+                    <span className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground/80 dark:text-neutral-600">{item.group}</span>
                   </button>
                 ))
               )}

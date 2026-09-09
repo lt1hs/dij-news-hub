@@ -60,9 +60,9 @@ export default function ChatInterface({ articleTitle, isOpen, onClose }: ChatInt
   if (!isOpen) return null;
 
   return (
-    <div className="fixed top-0 right-0 w-80 h-screen border border-white/10 bg-white/5 shadow-2xl shadow-black/40 backdrop-blur-sm border-l border-white/10 z-40">
+    <div className="fixed top-0 right-0 w-80 h-screen border border-foreground/10 bg-foreground/5 shadow-2xl shadow-black/10 dark:shadow-black/40 backdrop-blur-sm border-l border-foreground/10 z-40">
         {/* Header */}
-        <div className="flex items-center justify-between p-3 border-b border-white/10 bg-white/5">
+        <div className="flex items-center justify-between p-3 border-b border-foreground/10 bg-foreground/5">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded-md bg-primary/10 flex items-center justify-center">
               <Bot className="w-3 h-3 text-primary" />
@@ -129,7 +129,7 @@ export default function ChatInterface({ articleTitle, isOpen, onClose }: ChatInt
         </ScrollArea>
 
         {/* Input */}
-        <div className="p-3 border-t border-white/10 bg-white/5">
+        <div className="p-3 border-t border-foreground/10 bg-foreground/5">
           <div className="flex gap-2">
             <input
               value={input}

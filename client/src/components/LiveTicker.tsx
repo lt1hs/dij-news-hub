@@ -20,12 +20,12 @@ export default function LiveTicker({ compact = false }: { compact?: boolean }) {
             animate={{ height: compact ? 27 : 36 }}
             transition={{ type: "spring", stiffness: 320, damping: 32 }}
             className={cn(
-                "relative w-full bg-white/[0.03] border border-white/10 backdrop-blur-xl flex items-center overflow-hidden shadow-2xl transition-[border-radius] duration-300",
+                "relative w-full bg-foreground/[0.03] border border-foreground/10 backdrop-blur-xl flex items-center overflow-hidden shadow-2xl transition-[border-radius] duration-300",
                 compact ? "rounded-b-xl rounded-t-none border-t-0" : "rounded-[50px]"
             )}
         >
                 {/* Static Prefix */}
-                <div className={cn("flex items-center gap-2 px-3 sm:px-4 bg-sidebar-primary/10 border-r border-white/10 h-full text-sidebar-primary font-black tracking-[0.16em] flex-shrink-0 z-20 uppercase transition-all", compact ? "text-[8px]" : "text-[10px]")}>
+                <div className={cn("flex items-center gap-2 px-3 sm:px-4 bg-sidebar-primary/10 border-r border-foreground/10 h-full text-sidebar-primary font-black tracking-[0.16em] flex-shrink-0 z-20 uppercase transition-all", compact ? "text-[8px]" : "text-[10px]")}>
                     <Activity size={12} className="animate-pulse" />
                     <span className="hidden sm:inline">Intelligence Stream</span><span className="sm:hidden">Live</span>
                 </div>
@@ -39,20 +39,20 @@ export default function LiveTicker({ compact = false }: { compact?: boolean }) {
                     >
                         {[...NEWS_FLASHES, ...NEWS_FLASHES, ...NEWS_FLASHES].map((news, i) => (
                             <div key={i} className="flex items-center gap-3">
-                                <Radio size={12} className="text-neutral-500" />
-                                <span className={cn("text-white font-bold tracking-tight uppercase opacity-90 transition-all", compact ? "text-[9px]" : "text-[11px]")}>{news}</span>
+                                <Radio size={12} className="text-muted-foreground dark:text-neutral-500" />
+                                <span className={cn("text-foreground dark:text-white font-bold tracking-tight uppercase opacity-90 transition-all", compact ? "text-[9px]" : "text-[11px]")}>{news}</span>
                                 <div className="h-1 w-1 rounded-full bg-sidebar-primary/40 mx-2" />
                             </div>
                         ))}
                     </motion.div>
 
                     {/* Subtle Fades */}
-                    <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-[#121417] to-transparent pointer-events-none z-20" />
-                    <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[#121417] to-transparent pointer-events-none z-20" />
+                    <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-chrome to-transparent pointer-events-none z-20" />
+                    <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-chrome to-transparent pointer-events-none z-20" />
                 </div>
 
                 {/* Status Indicator */}
-                <div className="hidden md:flex items-center gap-2 px-4 h-full text-[9px] font-black text-neutral-500 uppercase tracking-widest bg-white/[0.02] border-l border-white/10 z-20">
+                <div className="hidden md:flex items-center gap-2 px-4 h-full text-[9px] font-black text-muted-foreground dark:text-neutral-500 uppercase tracking-widest bg-foreground/[0.02] border-l border-foreground/10 z-20">
                     <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
                     Live
                 </div>

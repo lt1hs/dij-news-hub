@@ -155,10 +155,10 @@ export default function DynamicPane({ mode, onModeChange, contextArticle = null,
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-sidebar-primary">Story context</p>
-          <p className="mt-1 line-clamp-2 text-[12px] font-medium leading-5 text-white">{contextArticle.title}</p>
-          {contextArticle.category && <p className="mt-1 text-[10px] text-neutral-500">{contextArticle.category}</p>}
+          <p className="mt-1 line-clamp-2 text-[12px] font-medium leading-5 text-foreground dark:text-white">{contextArticle.title}</p>
+          {contextArticle.category && <p className="mt-1 text-[10px] text-muted-foreground dark:text-neutral-500">{contextArticle.category}</p>}
         </div>
-        <button type="button" onClick={onClearContext} aria-label="Clear story context" className="rounded-md p-1 text-neutral-500 transition hover:bg-white/5 hover:text-white">
+        <button type="button" onClick={onClearContext} aria-label="Clear story context" className="rounded-md p-1 text-muted-foreground dark:text-neutral-500 transition hover:bg-foreground/5 hover:text-foreground dark:hover:text-white">
           <X className="h-3.5 w-3.5" />
         </button>
       </div>
@@ -166,14 +166,14 @@ export default function DynamicPane({ mode, onModeChange, contextArticle = null,
         <button
           type="button"
           onClick={() => handleSend(`Brief me on: ${contextArticle.title}`)}
-          className="rounded-full border border-white/[.1] bg-black/20 px-2.5 py-1 text-[11px] text-neutral-300 transition hover:text-white"
+          className="rounded-full border border-foreground/[.1] bg-black/20 px-2.5 py-1 text-[11px] text-muted-foreground dark:text-neutral-300 transition hover:text-foreground dark:hover:text-white"
         >
           Brief this
         </button>
         <button
           type="button"
           onClick={runSourceCompare}
-          className="inline-flex items-center gap-1 rounded-full border border-white/[.1] bg-black/20 px-2.5 py-1 text-[11px] text-neutral-300 transition hover:text-white"
+          className="inline-flex items-center gap-1 rounded-full border border-foreground/[.1] bg-black/20 px-2.5 py-1 text-[11px] text-muted-foreground dark:text-neutral-300 transition hover:text-foreground dark:hover:text-white"
         >
           <GitCompare className="h-3 w-3" /> Compare sources
         </button>
@@ -188,13 +188,13 @@ export default function DynamicPane({ mode, onModeChange, contextArticle = null,
   );
 
   const iconBtn =
-    "inline-flex h-8 w-8 items-center justify-center rounded-full text-neutral-500 ring-1 ring-white/[.08] transition hover:bg-white/[.06] hover:text-white";
+    "inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground dark:text-neutral-500 ring-1 ring-foreground/[.08] transition hover:bg-foreground/[.06] hover:text-foreground dark:hover:text-white";
 
   const composer = (
     <div
       className={cn(
-        "flex items-center gap-1 rounded-full border bg-[#111923]/95 px-1.5 py-1.5 pl-3.5 transition",
-        "border-white/[.1] focus-within:border-sidebar-primary/35 focus-within:bg-[#121b28]"
+        "flex items-center gap-1 rounded-full border bg-chrome-raised/95 px-1.5 py-1.5 pl-3.5 transition",
+        "border-foreground/[.1] focus-within:border-sidebar-primary/35 focus-within:bg-chrome-raised"
       )}
     >
       <input
@@ -209,9 +209,9 @@ export default function DynamicPane({ mode, onModeChange, contextArticle = null,
         }}
         placeholder="Ask the desk…"
         disabled={isLoading}
-        className="min-w-0 flex-1 bg-transparent py-1.5 text-[13px] text-white outline-none placeholder:text-neutral-600"
+        className="min-w-0 flex-1 bg-transparent py-1.5 text-[13px] text-foreground dark:text-white outline-none placeholder:text-muted-foreground"
       />
-      <button type="button" className="rounded-full p-2 text-neutral-500 transition hover:bg-white/[.04] hover:text-white" aria-label="Voice input">
+      <button type="button" className="rounded-full p-2 text-muted-foreground dark:text-neutral-500 transition hover:bg-foreground/[.04] hover:text-foreground dark:hover:text-white" aria-label="Voice input">
         <Mic className="h-4 w-4" />
       </button>
       <button
@@ -222,7 +222,7 @@ export default function DynamicPane({ mode, onModeChange, contextArticle = null,
           "flex h-8 w-8 items-center justify-center rounded-full transition",
           canSend
             ? "bg-sidebar-primary text-white shadow-[0_0_18px_rgba(59,130,246,.28)] enabled:active:scale-95"
-            : "bg-white/10 text-neutral-600"
+            : "bg-foreground/10 text-muted-foreground/80 dark:text-neutral-600"
         )}
         aria-label="Send"
       >
@@ -232,22 +232,22 @@ export default function DynamicPane({ mode, onModeChange, contextArticle = null,
   );
 
   const briefing = (
-    <div className="overflow-hidden rounded-2xl border border-white/[.08] bg-white/[.025]">
+    <div className="overflow-hidden rounded-2xl border border-foreground/[.08] bg-foreground/[.025]">
       <button
         type="button"
         onClick={() => setBriefOpen((open) => !open)}
-        className="flex w-full items-center justify-between gap-3 px-3.5 py-2.5 text-left transition hover:bg-white/[.02]"
+        className="flex w-full items-center justify-between gap-3 px-3.5 py-2.5 text-left transition hover:bg-foreground/[.02]"
         aria-expanded={briefOpen}
       >
         <div className="flex min-w-0 items-center gap-2">
           <TrendingUp className="h-3.5 w-3.5 shrink-0 text-emerald-400" />
-          <span className="truncate text-[12px] text-neutral-300">
+          <span className="truncate text-[12px] text-muted-foreground dark:text-neutral-300">
             <span className="font-medium text-emerald-400">Positive</span>
-            <span className="text-neutral-600"> · </span>
+            <span className="text-muted-foreground/80 dark:text-neutral-600"> · </span>
             {briefOpen ? "Today’s outlook" : BRIEF}
           </span>
         </div>
-        <ChevronDown className={cn("h-4 w-4 shrink-0 text-neutral-500 transition-transform duration-200", briefOpen && "rotate-180")} />
+        <ChevronDown className={cn("h-4 w-4 shrink-0 text-muted-foreground dark:text-neutral-500 transition-transform duration-200", briefOpen && "rotate-180")} />
       </button>
 
       <AnimatePresence initial={false}>
@@ -260,18 +260,18 @@ export default function DynamicPane({ mode, onModeChange, contextArticle = null,
             transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
             className="overflow-hidden"
           >
-            <div className="space-y-3 border-t border-white/[.06] px-3.5 pb-3.5 pt-3">
-              <p className="text-[13px] leading-6 text-neutral-200">{BRIEF}</p>
+            <div className="space-y-3 border-t border-foreground/[.06] px-3.5 pb-3.5 pt-3">
+              <p className="text-[13px] leading-6 text-foreground/90 dark:text-neutral-200">{BRIEF}</p>
               <div className="flex gap-2 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 {KEY_STORIES.map((story) => (
                   <button
                     key={story.label}
                     type="button"
                     onClick={() => handleSend(`Brief me on ${story.label.toLowerCase()}`)}
-                    className="min-w-[120px] shrink-0 rounded-xl border border-white/[.08] bg-[#0d1520]/8 px-3 py-2 text-left transition hover:border-sidebar-primary/30 hover:bg-sidebar-primary/[.08]"
+                    className="min-w-[120px] shrink-0 rounded-xl border border-foreground/[.08] bg-chrome/8 px-3 py-2 text-left transition hover:border-sidebar-primary/30 hover:bg-sidebar-primary/[.08]"
                   >
-                    <span className="block text-[11px] font-semibold text-white">{story.label}</span>
-                    <span className="mt-0.5 block text-[10px] leading-4 text-neutral-500">{story.detail}</span>
+                    <span className="block text-[11px] font-semibold text-foreground dark:text-white">{story.label}</span>
+                    <span className="mt-0.5 block text-[10px] leading-4 text-muted-foreground dark:text-neutral-500">{story.detail}</span>
                   </button>
                 ))}
               </div>
@@ -286,14 +286,14 @@ export default function DynamicPane({ mode, onModeChange, contextArticle = null,
     <div ref={listRef} className="relative min-h-0 flex-1 overflow-y-auto overscroll-contain custom-scrollbar">
       {messages.length === 0 ? (
         <div className="space-y-2.5 px-4 pb-2 pt-1">
-          <p className="text-[11px] text-neutral-600">Start from a prompt, or ask anything about the feed.</p>
+          <p className="text-[11px] text-muted-foreground/80 dark:text-neutral-600">Start from a prompt, or ask anything about the feed.</p>
           <div className="flex flex-wrap gap-1.5">
             {SUGGESTIONS.map((suggestion) => (
               <button
                 key={suggestion}
                 type="button"
                 onClick={() => handleSend(suggestion)}
-                className="rounded-full border border-white/[.08] bg-white/[.03] px-3 py-1.5 text-[12px] text-neutral-400 transition hover:border-white/18 hover:bg-white/[.05] hover:text-white"
+                className="rounded-full border border-foreground/[.08] bg-foreground/[.03] px-3 py-1.5 text-[12px] text-muted-foreground dark:text-neutral-400 transition hover:border-foreground/18 hover:bg-foreground/[.05] hover:text-foreground dark:hover:text-white"
               >
                 {suggestion}
               </button>
@@ -313,7 +313,7 @@ export default function DynamicPane({ mode, onModeChange, contextArticle = null,
                   "max-w-[88%] rounded-2xl px-3.5 py-2.5 text-[13px] leading-6",
                   message.isUser
                     ? "ml-auto rounded-br-md bg-sidebar-primary text-white shadow-[0_8px_24px_rgba(59,130,246,.18)]"
-                    : "mr-auto rounded-bl-md border border-white/[.08] bg-white/[.035] text-neutral-300"
+                    : "mr-auto rounded-bl-md border border-foreground/[.08] bg-foreground/[.035] text-muted-foreground dark:text-neutral-300"
                 )}
               >
                 {message.content}
@@ -321,7 +321,7 @@ export default function DynamicPane({ mode, onModeChange, contextArticle = null,
             ))}
           </AnimatePresence>
           {isLoading && (
-            <div className="mr-auto flex items-center gap-1.5 rounded-2xl rounded-bl-md border border-white/[.08] bg-white/[.035] px-3.5 py-3">
+            <div className="mr-auto flex items-center gap-1.5 rounded-2xl rounded-bl-md border border-foreground/[.08] bg-foreground/[.035] px-3.5 py-3">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-sidebar-primary/70" />
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-sidebar-primary/50 [animation-delay:140ms]" />
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-sidebar-primary/30 [animation-delay:280ms]" />
@@ -345,50 +345,14 @@ export default function DynamicPane({ mode, onModeChange, contextArticle = null,
             exit={{ opacity: 0 }}
             transition={{ duration: reduceMotion ? 0.08 : 0.18 }}
             onClick={() => onModeChange("compact")}
-            className="fixed inset-0 z-[75] bg-[#04070c]/45"
+            className="fixed inset-0 z-[75] bg-chrome-overlay/45"
           />
         )}
       </AnimatePresence>
 
-      {!isPinned && (
+      {!isPinned && isFloat && (
         <div className={centerClass}>
           <AnimatePresence initial={false}>
-            {isCompact ? (
-              <motion.button
-                key="dock"
-                type="button"
-                layoutId="desk-shell"
-                transition={spring}
-                whileHover={reduceMotion ? undefined : { y: -1 }}
-                whileTap={reduceMotion ? undefined : { scale: 0.985 }}
-                onClick={() => onModeChange("float")}
-                aria-label="Open intelligence desk"
-                className="group relative flex h-12 w-full items-center gap-3 overflow-hidden rounded-full border border-white/[.12] bg-[#0c141f]/92 px-2 pl-3 shadow-[0_14px_36px_rgba(0,0,0,.42)] backdrop-blur-xl"
-              >
-                <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
-                <motion.span
-                  layoutId="desk-mark"
-                  className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sidebar-primary/15 ring-1 ring-sidebar-primary/30"
-                >
-                  {!reduceMotion && (
-                    <span className="absolute inset-0 animate-ping rounded-full bg-sidebar-primary/20 opacity-20 [animation-duration:2.6s]" />
-                  )}
-                  <Sparkles className="relative h-3.5 w-3.5 text-sidebar-primary" />
-                </motion.span>
-
-                <div className="min-w-0 flex-1 text-left">
-                  <motion.p layoutId="desk-title" className="text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
-                    Intelligence desk
-                  </motion.p>
-                  <p className="truncate text-[13px] text-neutral-300 transition group-hover:text-white">Ask about today’s news…</p>
-                </div>
-
-                <span className="mr-0.5 flex h-8 items-center gap-1.5 rounded-full bg-white/[.06] px-2.5 text-[11px] font-medium text-neutral-400 ring-1 ring-white/[.06] transition group-hover:bg-white group-hover:text-neutral-950">
-                  Open
-                  <ArrowUp className="h-3 w-3 rotate-45" />
-                </span>
-              </motion.button>
-            ) : (
               <motion.div
                 key="float-panel"
                 layoutId="desk-shell"
@@ -396,9 +360,9 @@ export default function DynamicPane({ mode, onModeChange, contextArticle = null,
                 role="dialog"
                 aria-modal="true"
                 aria-label="Intelligence desk"
-                className="relative flex max-h-[min(64vh,560px)] w-full origin-bottom flex-col overflow-hidden rounded-[24px] border border-white/[.12] bg-[#0a1018]/96 shadow-[0_28px_90px_rgba(0,0,0,.58)] backdrop-blur-xl"
+                className="relative flex max-h-[min(64vh,560px)] w-full origin-bottom flex-col overflow-hidden rounded-[24px] border border-foreground/[.12] bg-chrome-deep/96 shadow-[0_24px_60px_rgba(15,23,42,.12)] dark:shadow-[0_28px_90px_rgba(0,0,0,.58)] backdrop-blur-xl"
               >
-                <div className="pointer-events-none absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-white/22 to-transparent" />
+                <div className="pointer-events-none absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-foreground/22 to-transparent" />
 
                 <div className="relative flex shrink-0 items-center justify-between gap-3 px-4 pb-2 pt-3.5">
                   <div className="flex min-w-0 items-center gap-2.5">
@@ -410,10 +374,10 @@ export default function DynamicPane({ mode, onModeChange, contextArticle = null,
                       <Sparkles className="h-3.5 w-3.5 text-sidebar-primary" />
                     </motion.span>
                     <div className="min-w-0">
-                      <motion.p layoutId="desk-title" className="text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
+                      <motion.p layoutId="desk-title" className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground dark:text-neutral-500">
                         Intelligence desk
                       </motion.p>
-                      <h3 className="text-[15px] font-semibold tracking-tight text-white">Daily briefing</h3>
+                      <h3 className="text-[15px] font-semibold tracking-tight text-foreground dark:text-white">Daily briefing</h3>
                     </div>
                   </div>
                   <div className="flex items-center gap-1.5">
@@ -422,7 +386,7 @@ export default function DynamicPane({ mode, onModeChange, contextArticle = null,
                       onClick={() => onModeChange("pinned")}
                       aria-label="Pin desk to the right"
                       title="Pin for long chat"
-                      className="hidden h-8 items-center gap-1.5 rounded-full px-2.5 text-[11px] font-medium text-neutral-400 ring-1 ring-white/[.08] transition hover:border-sidebar-primary/30 hover:bg-sidebar-primary/10 hover:text-sidebar-primary lg:inline-flex"
+                      className="hidden h-8 items-center gap-1.5 rounded-full px-2.5 text-[11px] font-medium text-muted-foreground dark:text-neutral-400 ring-1 ring-foreground/[.08] transition hover:border-sidebar-primary/30 hover:bg-sidebar-primary/10 hover:text-sidebar-primary lg:inline-flex"
                     >
                       <Pin className="h-3.5 w-3.5" />
                       Pin
@@ -440,7 +404,6 @@ export default function DynamicPane({ mode, onModeChange, contextArticle = null,
                 <div className="mt-2 flex min-h-0 flex-1 flex-col">{thread}</div>
                 <div className="relative shrink-0 p-3 pt-1">{composer}</div>
               </motion.div>
-            )}
           </AnimatePresence>
         </div>
       )}
@@ -454,12 +417,12 @@ export default function DynamicPane({ mode, onModeChange, contextArticle = null,
             exit={reduceMotion ? undefined : { opacity: 0, x: 16 }}
             transition={spring}
             aria-label="Pinned intelligence desk"
-            className="fixed inset-y-3 right-3 z-[70] hidden w-[min(360px,calc(100vw-1.5rem))] flex-col overflow-hidden rounded-[20px] border border-white/[.09] bg-[#0a121d]/94 shadow-[0_24px_70px_rgba(0,0,0,.42)] backdrop-blur-xl lg:flex"
+            className="fixed inset-y-3 end-3 z-[70] hidden w-[min(360px,calc(100vw-1.5rem))] flex-col overflow-hidden rounded-[20px] border border-foreground/[.09] bg-chrome/94 shadow-[0_20px_50px_rgba(15,23,42,.10)] dark:shadow-[0_24px_70px_rgba(0,0,0,.42)] backdrop-blur-xl lg:flex"
           >
             <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[radial-gradient(circle_at_18%_0%,rgba(35,145,255,.11),transparent_60%)]" />
-            <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/18 to-transparent" />
+            <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-foreground/18 to-transparent" />
 
-            <div className="relative flex shrink-0 items-center justify-between gap-3 border-b border-white/[.07] px-3.5 py-3">
+            <div className="relative flex shrink-0 items-center justify-between gap-3 border-b border-foreground/[.07] px-3.5 py-3">
               <div className="flex min-w-0 items-center gap-2.5">
                 <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-sidebar-primary/15 ring-1 ring-sidebar-primary/25">
                   <span className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,.9)]" />
@@ -467,7 +430,7 @@ export default function DynamicPane({ mode, onModeChange, contextArticle = null,
                 </span>
                 <div className="min-w-0">
                   <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-sky-400/90">Pinned desk</p>
-                  <h3 className="truncate text-[14px] font-semibold tracking-tight text-white">Continue the chat</h3>
+                  <h3 className="truncate text-[14px] font-semibold tracking-tight text-foreground dark:text-white">Continue the chat</h3>
                 </div>
               </div>
               <div className="flex items-center gap-1">
@@ -491,7 +454,7 @@ export default function DynamicPane({ mode, onModeChange, contextArticle = null,
               {briefing}
             </div>
             <div className="mt-2 flex min-h-0 flex-1 flex-col">{thread}</div>
-            <div className="relative shrink-0 border-t border-white/[.07] bg-black/10 p-3">{composer}</div>
+            <div className="relative shrink-0 border-t border-foreground/[.07] bg-black/10 p-3">{composer}</div>
           </motion.aside>
         )}
       </AnimatePresence>

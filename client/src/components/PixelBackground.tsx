@@ -1,4 +1,6 @@
 import { useEffect, useRef } from "react";
+import { useTheme } from "@/hooks/useTheme";
+import { cn } from "@/lib/utils";
 
 class Pixel {
   width: number;
@@ -39,7 +41,7 @@ class Pixel {
     this.size = 0;
     this.sizeStep = Math.random() * 0.4 + 0.2;
     this.minSize = 0.3;
-    this.maxSizeInteger = 1.5; // Smaller pixels
+    this.maxSizeInteger = 1.5;
     this.maxSize = this.getRandomValue(this.minSize, this.maxSizeInteger);
     this.delay = delay;
     this.counter = 0;
@@ -106,7 +108,6 @@ class Pixel {
       this.isReverse = false;
     }
 
-    // Simplified shimmer calculation for better performance
     const shimmerSpeed = this.speed * 0.7;
     if (this.isReverse) {
       this.size -= shimmerSpeed;
@@ -116,7 +117,13 @@ class Pixel {
   }
 }
 
+const PALETTES = {
+  dark: ["#60a5fa", "#3b82f6", "#2563eb", "#64748b"],
+  light: ["#1e3a8a", "#1d4ed8", "#1e40af", "#0f172a"],
+};
+
 export default function PixelBackground() {
+  const { theme } = useTheme();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pixelsRef = useRef<Pixel[]>([]);
   const animationRef = useRef<number | null>(null);
@@ -130,9 +137,9 @@ export default function PixelBackground() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const colors = ["#60a5fa", "#3b82f6", "#2563eb", "#64748b"];
+    const colors = PALETTES[theme];
     const gap = 12;
-    const speed = 60 * 0.001; // Convert to match provided code
+    const speed = 60 * 0.001;
 
     const getDistanceToBottomCenter = (x: number, y: number, canvasWidth: number, canvasHeight: number) => {
       const centerX = canvasWidth / 2;
@@ -149,7 +156,7 @@ export default function PixelBackground() {
       const width = Math.floor(rect.width);
       const height = Math.floor(rect.height);
       const dpr = window.devicePixelRatio || 1;
-      
+
       canvas.width = width * dpr;
       canvas.height = height * dpr;
       canvas.style.width = `${width}px`;
@@ -157,14 +164,13 @@ export default function PixelBackground() {
 
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.scale(dpr, dpr);
-      
-      // Create pixels with exact spacing from provided code
+
       pixelsRef.current = [];
       for (let x = 0; x < width; x += gap) {
         for (let y = 0; y < height; y += gap) {
           const color = colors[Math.floor(Math.random() * colors.length)];
           const delay = getDistanceToBottomCenter(x, y, width, height) * 0.35;
-          
+
           pixelsRef.current.push(
             new Pixel(canvas, ctx, x, y, color, speed, delay)
           );
@@ -198,10 +204,9 @@ export default function PixelBackground() {
       }
     };
 
-    // Check for reduced motion preference and performance
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const isLowPerformance = navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4;
-    
+
     if (reducedMotion || isLowPerformance) return;
 
     handleResize();
@@ -216,29 +221,27 @@ export default function PixelBackground() {
       resizeObserver.disconnect();
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
+        animationRef.current = null;
       }
     };
-  }, []);
+  }, [theme]);
 
   return (
     <div className="fixed inset-0 w-full h-full pointer-events-none overflow-hidden z-0">
-      <div 
-        className="absolute inset-0 w-full h-full"
-        style={{ 
-          background: 'linear-gradient(135deg, #0b1119 0%, #0a1018 55%, #0d1520 100%)' 
-        }}
-      />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(30,64,110,0.3)_0%,_transparent_58%)]" />
-      <div className="absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-[#101c2b]/50 to-transparent" />
-      
+      <div className="pixel-stage absolute inset-0 w-full h-full" />
+      <div className="pixel-veil absolute inset-0" />
+      <div className="pixel-horizon absolute top-0 left-0 right-0 h-1/3" />
+
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 w-full h-full opacity-[0.22] [mask-image:linear-gradient(to_bottom,black,rgba(0,0,0,.72)_60%,transparent)]"
-        style={{ 
-          display: 'grid',
-          inlineSize: '100%',
-          blockSize: '100%',
-          mixBlendMode: 'screen'
+        className={cn(
+          "pixel-canvas absolute inset-0 w-full h-full [mask-image:linear-gradient(to_bottom,black,rgba(0,0,0,.72)_60%,transparent)]",
+          theme === "dark" && "[mix-blend-mode:screen]",
+        )}
+        style={{
+          display: "grid",
+          inlineSize: "100%",
+          blockSize: "100%",
         }}
       />
     </div>

@@ -59,6 +59,13 @@ export default {
           "4": "hsl(var(--chart-4) / <alpha-value>)",
           "5": "hsl(var(--chart-5) / <alpha-value>)",
         },
+        chrome: {
+          DEFAULT: "hsl(var(--chrome) / <alpha-value>)",
+          deep: "hsl(var(--chrome-deep) / <alpha-value>)",
+          panel: "hsl(var(--chrome-panel) / <alpha-value>)",
+          raised: "hsl(var(--chrome-raised) / <alpha-value>)",
+          overlay: "hsl(var(--chrome-overlay) / <alpha-value>)",
+        },
         sidebar: {
           ring: "hsl(var(--sidebar-ring) / <alpha-value>)",
           DEFAULT: "hsl(var(--sidebar) / <alpha-value>)",

@@ -31,9 +31,9 @@ export default function ResourceSidebar() {
 
     return (
         <aside className="hidden xl:flex flex-col gap-6 w-64 shrink-0">
-            <div className="flex flex-col gap-4 p-5 rounded-[15px] border border-white/5 bg-white/[0.01] backdrop-blur-3xl shadow-2xl">
+            <div className="flex flex-col gap-4 p-5 rounded-[15px] border border-foreground/5 bg-foreground/[0.01] backdrop-blur-3xl shadow-2xl">
                 <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-neutral-500 flex items-center gap-2">
+                    <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground dark:text-neutral-500 flex items-center gap-2">
                         <Rss size={14} className="text-sidebar-primary" />
                         Resources
                     </h3>
@@ -44,14 +44,14 @@ export default function ResourceSidebar() {
                     {RESOURCES.map((res) => {
                         const isFollowed = followed.includes(res.id);
                         return (
-                            <div key={res.id} className="group flex items-center justify-between gap-3 p-2 rounded-xl hover:bg-white/[0.03] transition-all border border-transparent hover:border-white/5">
+                            <div key={res.id} className="group flex items-center justify-between gap-3 p-2 rounded-xl hover:bg-foreground/[0.03] transition-all border border-transparent hover:border-foreground/5">
                                 <div className="flex items-center gap-3">
-                                    <div className="h-9 w-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-neutral-400 group-hover:text-white transition-colors">
+                                    <div className="h-9 w-9 rounded-lg bg-foreground/5 border border-foreground/10 flex items-center justify-center text-muted-foreground dark:text-neutral-400 group-hover:text-foreground dark:group-hover:text-white transition-colors">
                                         <res.icon size={18} />
                                     </div>
                                     <div className="flex flex-col">
-                                        <span className="text-[12px] font-bold text-white leading-tight">{res.name}</span>
-                                        <span className="text-[9px] font-bold text-neutral-500 uppercase tracking-tighter">{res.followers} Analysts</span>
+                                        <span className="text-[12px] font-bold text-foreground dark:text-white leading-tight">{res.name}</span>
+                                        <span className="text-[9px] font-bold text-muted-foreground dark:text-neutral-500 uppercase tracking-tighter">{res.followers} Analysts</span>
                                     </div>
                                 </div>
 
@@ -63,7 +63,7 @@ export default function ResourceSidebar() {
                                         "h-7 w-7 rounded-lg flex items-center justify-center transition-all border shadow-sm",
                                         isFollowed
                                             ? "bg-sidebar-primary/10 border-sidebar-primary/30 text-sidebar-primary"
-                                            : "bg-white/5 border-white/10 text-neutral-500 hover:text-white"
+                                            : "bg-foreground/5 border-foreground/10 text-muted-foreground dark:text-neutral-500 hover:text-foreground dark:hover:text-white"
                                     )}
                                 >
                                     {isFollowed ? <Check size={14} /> : <Plus size={14} />}
@@ -73,7 +73,7 @@ export default function ResourceSidebar() {
                     })}
                 </div>
 
-                <button className="mt-2 w-full py-2 rounded-xl border border-white/5 bg-white/[0.02] text-[10px] font-black text-neutral-500 uppercase tracking-widest hover:text-white hover:bg-white/[0.05] transition-all">
+                <button className="mt-2 w-full py-2 rounded-xl border border-foreground/5 bg-foreground/[0.02] text-[10px] font-black text-muted-foreground dark:text-neutral-500 uppercase tracking-widest hover:text-foreground dark:hover:text-white hover:bg-foreground/[0.05] transition-all">
                     Explore Directory
                 </button>
             </div>
@@ -85,7 +85,7 @@ export default function ResourceSidebar() {
                         <ShieldCheck size={14} />
                         Alpha Verified
                     </h4>
-                    <p className="text-[10px] leading-relaxed text-neutral-400">
+                    <p className="text-[10px] leading-relaxed text-muted-foreground dark:text-neutral-400">
                         Gain executive access to verified deep intelligence and primary sources.
                     </p>
                 </div>

@@ -63,13 +63,13 @@ export default function NotificationsView({ onOpenDesk, onOpenTracking }: Notifi
       actions={
         <button
           onClick={markAll}
-          className="flex h-9 items-center gap-2 rounded-lg border border-white/[.08] bg-white/[.03] px-3 text-xs text-neutral-300 transition hover:text-white"
+          className="flex h-9 items-center gap-2 rounded-lg border border-foreground/[.08] bg-foreground/[.03] px-3 text-xs text-muted-foreground dark:text-neutral-300 transition hover:text-foreground dark:hover:text-white"
         >
           <CheckCheck size={14} /> Mark all read
         </button>
       }
     >
-      <div className="overflow-hidden rounded-xl border border-white/[.08] bg-[#0b121c]/55 divide-y divide-white/[.08]">
+      <div className="overflow-hidden rounded-xl border border-foreground/[.08] bg-chrome/55 divide-y divide-foreground/[.08]">
         {items.map((item) => {
           const Icon = iconFor[item.type as keyof typeof iconFor] || Bell;
           return (
@@ -82,20 +82,20 @@ export default function NotificationsView({ onOpenDesk, onOpenTracking }: Notifi
                 if (item.type === "alert") onOpenTracking?.();
               }}
               className={cn(
-                "flex w-full items-start gap-3 px-4 py-4 text-left transition hover:bg-white/[.03] sm:px-5",
+                "flex w-full items-start gap-3 px-4 py-4 text-left transition hover:bg-foreground/[.03] sm:px-5",
                 item.unread && "bg-sidebar-primary/[.04]"
               )}
             >
-              <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/[.08] bg-white/[.03] text-sidebar-primary">
+              <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-foreground/[.08] bg-foreground/[.03] text-sidebar-primary">
                 <Icon size={15} />
               </span>
               <span className="min-w-0 flex-1">
                 <span className="flex items-center gap-2">
-                  <span className="truncate text-sm font-semibold text-white">{item.title}</span>
+                  <span className="truncate text-sm font-semibold text-foreground dark:text-white">{item.title}</span>
                   {item.unread && <span className="h-1.5 w-1.5 rounded-full bg-sidebar-primary" />}
                 </span>
-                <span className="mt-1 block text-[13px] leading-5 text-neutral-500">{item.body}</span>
-                <span className="mt-2 block text-[11px] text-neutral-600">{item.time}</span>
+                <span className="mt-1 block text-[13px] leading-5 text-muted-foreground dark:text-neutral-500">{item.body}</span>
+                <span className="mt-2 block text-[11px] text-muted-foreground/80 dark:text-neutral-600">{item.time}</span>
               </span>
             </button>
           );

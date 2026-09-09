@@ -1,0 +1,40 @@
+{
+  "header.searchPlaceholder": "Search Information",
+  "header.dailyInsights": "Daily Insights",
+  "header.logout": "Logout",
+  "header.joinFusion": "Join Fusion",
+  "header.tagline": "Intelligence desk",
+  "language.toggleLabel": "Switch language",
+  "language.english": "English",
+  "language.arabic": "Arabic",
+
+  "common.save": "Save",
+  "common.cancel": "Cancel",
+  "common.close": "Close",
+  "common.loading": "Loading...",
+
+  "newsFeed.latestNews": "Latest news",
+  "newsFeed.viewAll": "View all",
+  "newsFeed.linkReady": "Link ready",
+  "newsFeed.timeAgo.lessThanHour": "Less than an hour ago",
+
+  "settings.language": "Language",
+  "settings.languageDescription": "Choose your preferred interface language",
+
+  "sidebar.forYou": "For You",
+  "sidebar.headlines": "Headlines",
+  "sidebar.latest": "Latest",
+  "sidebar.tracking": "Tracking",
+  "sidebar.saved": "Saved",
+  "sidebar.audio": "Audio",
+  "sidebar.notifications": "Notifications",
+  "sidebar.settings": "Settings",
+  "sidebar.profile": "Profile",
+  "sidebar.proTier": "Pro tier",
+  "sidebar.user": "User",
+  "sidebar.closeNavigation": "Close navigation",
+  "sidebar.closeMenu": "Close menu",
+  "sidebar.collapseSidebar": "Collapse sidebar",
+  "sidebar.expandSidebar": "Expand sidebar",
+  "sidebar.signOut": "Sign out"
+}

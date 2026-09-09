@@ -1,9 +1,12 @@
-import { ThemeToggle } from '../ThemeToggle';
+import { ThemeProvider } from "@/hooks/useTheme";
+import { ThemeToggle } from "../ThemeToggle";
 
 export default function ThemeToggleExample() {
   return (
-    <div className="p-4">
-      <ThemeToggle />
-    </div>
+    <ThemeProvider>
+      <div className="p-4">
+        <ThemeToggle />
+      </div>
+    </ThemeProvider>
   );
 }

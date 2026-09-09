@@ -4,6 +4,7 @@ import TopHeadlinesSlider from "./TopHeadlinesSlider";
 import CategoryBar from "./CategoryBar";
 import NewsCard from "./NewsCard";
 import IntelligenceSidebar from "./IntelligenceSidebar";
+import ActivityIsland from "./ActivityIsland";
 import AudioHub from "./AudioHub";
 import ArticleFocusMode from "./ArticleFocusMode";
 import DynamicPane, { type DeskArticleContext, type DeskMode } from "./DynamicPane";
@@ -38,6 +39,8 @@ export default function NewsFeed({ deskMode, setDeskMode, commandOpen, setComman
   const [focusArticle, setFocusArticle] = useState<Article | null>(null);
   const [isFocusOpen, setIsFocusOpen] = useState(false);
   const [isAudioOpen, setIsAudioOpen] = useState(false);
+  const [isAudioExpanded, setIsAudioExpanded] = useState(false);
+  const [isAudioPlaying, setIsAudioPlaying] = useState(true);
   const [deskContext, setDeskContext] = useState<DeskArticleContext | null>(null);
   const [pendingPrompt, setPendingPrompt] = useState<string | null>(null);
   const loaderRef = useRef<HTMLDivElement>(null);
@@ -74,10 +77,15 @@ export default function NewsFeed({ deskMode, setDeskMode, commandOpen, setComman
       sources: article.sources || undefined,
       category: article.category || undefined,
     });
+    setIsAudioExpanded(false);
     setDeskMode(deskMode === "pinned" ? "pinned" : "float");
   };
 
-  const handlePlayClick = () => setIsAudioOpen(true);
+  const handlePlayClick = () => {
+    setIsAudioOpen(true);
+    setIsAudioExpanded(false);
+    setIsAudioPlaying(true);
+  };
 
   const handleArticleClick = (article: Article) => {
     setFocusArticle(article);
@@ -149,7 +157,7 @@ export default function NewsFeed({ deskMode, setDeskMode, commandOpen, setComman
     }
     if (activeView === "settings") return <SettingsView />;
     if (activeView === "profile") return <ProfileView />;
-    if (activeView === "audio") return <AudioLibraryView onPlayEpisode={() => setIsAudioOpen(true)} />;
+    if (activeView === "audio") return <AudioLibraryView onPlayEpisode={() => handlePlayClick()} />;
 
     return (
       <div className="pt-8 pb-28">
@@ -170,14 +178,14 @@ export default function NewsFeed({ deskMode, setDeskMode, commandOpen, setComman
             <section className="min-w-0" aria-label="Latest news">
               <div className="mb-4 flex items-end justify-between gap-4">
                 <div>
-                  <h2 className="text-2xl font-semibold tracking-tight text-white">Latest news</h2>
-                  <p className="mt-1 text-xs text-neutral-500">Reporting from sources across your selected topics</p>
+                  <h2 className="text-2xl font-semibold tracking-tight text-foreground dark:text-white">Latest news</h2>
+                  <p className="mt-1 text-xs text-muted-foreground dark:text-neutral-500">Reporting from sources across your selected topics</p>
                 </div>
-                <button type="button" onClick={() => setActiveView("latest")} className="hidden text-xs font-medium text-neutral-400 transition hover:text-white sm:inline">
+                <button type="button" onClick={() => setActiveView("latest")} className="hidden text-xs font-medium text-muted-foreground dark:text-neutral-400 transition hover:text-foreground dark:hover:text-white sm:inline">
                   View all
                 </button>
               </div>
-              <div className="overflow-hidden rounded-xl border border-white/[.08] bg-[#0b121c]/55 divide-y divide-white/[.08]">
+              <div className="overflow-hidden rounded-xl border border-foreground/[.08] bg-chrome/55 divide-y divide-foreground/[.08]">
                 {articles.map((article: Article) => (
                   <div key={article.id}>
                     <NewsCard
@@ -225,8 +233,8 @@ export default function NewsFeed({ deskMode, setDeskMode, commandOpen, setComman
       <main
         className={cn(
           "min-w-0 transition-[margin,padding] duration-300 ease-out",
-          collapsed ? "md:ml-16" : "md:ml-[220px]",
-          deskPinned && "lg:pr-[392px]"
+          collapsed ? "md:ms-16" : "md:ms-[220px]",
+          deskPinned && "lg:pe-[392px]"
         )}
       >
         {renderView()}
@@ -239,7 +247,32 @@ export default function NewsFeed({ deskMode, setDeskMode, commandOpen, setComman
           pendingPrompt={pendingPrompt}
           onConsumePrompt={() => setPendingPrompt(null)}
         />
-        <AudioHub isOpen={isAudioOpen} onClose={() => setIsAudioOpen(false)} />
+        <ActivityIsland
+          deskCompact={deskMode === "compact"}
+          audioOpen={isAudioOpen && !isAudioExpanded}
+          audioPlaying={isAudioPlaying}
+          onOpenDesk={() => {
+            setIsAudioExpanded(false);
+            setDeskMode("float");
+          }}
+          onToggleAudioPlay={() => setIsAudioPlaying((playing) => !playing)}
+          onExpandAudio={() => setIsAudioExpanded(true)}
+          onCloseAudio={() => {
+            setIsAudioOpen(false);
+            setIsAudioExpanded(false);
+          }}
+        />
+        <AudioHub
+          isOpen={isAudioOpen}
+          expanded={isAudioExpanded}
+          isPlaying={isAudioPlaying}
+          onCollapse={() => setIsAudioExpanded(false)}
+          onTogglePlay={() => setIsAudioPlaying((playing) => !playing)}
+          onClose={() => {
+            setIsAudioOpen(false);
+            setIsAudioExpanded(false);
+          }}
+        />
         <ArticleFocusMode
           isOpen={isFocusOpen}
           onClose={() => setIsFocusOpen(false)}

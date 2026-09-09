@@ -54,29 +54,29 @@ export default function AudioLibraryView({ onPlayEpisode }: AudioLibraryViewProp
       description="Daily briefs, tracker deep dives, and desk clips you can play while reading the feed."
       wide
       actions={
-        <span className="flex items-center gap-2 rounded-full border border-white/[.08] bg-white/[.03] px-3 py-1.5 text-[11px] text-neutral-400">
+        <span className="flex items-center gap-2 rounded-full border border-foreground/[.08] bg-foreground/[.03] px-3 py-1.5 text-[11px] text-muted-foreground dark:text-neutral-400">
           <Radio size={12} className="text-sidebar-primary" /> Live desk audio
         </span>
       }
     >
-      <section className="mb-8 overflow-hidden rounded-2xl border border-white/[.09] bg-[#0a121d]/80">
+      <section className="mb-8 overflow-hidden rounded-2xl border border-foreground/[.09] bg-chrome/80">
         <div className="grid gap-0 md:grid-cols-[1.1fr_0.9fr]">
           <div className="relative p-6 sm:p-8">
             <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-[radial-gradient(circle_at_20%_0%,rgba(35,145,255,.14),transparent_60%)]" />
             <p className="relative text-[11px] font-semibold uppercase tracking-[0.18em] text-sky-400">Featured briefing</p>
-            <h2 className="relative mt-3 text-2xl font-semibold tracking-tight text-white">Morning intelligence stream</h2>
-            <p className="relative mt-3 max-w-lg text-sm leading-6 text-neutral-400">
+            <h2 className="relative mt-3 text-2xl font-semibold tracking-tight text-foreground dark:text-white">Morning intelligence stream</h2>
+            <p className="relative mt-3 max-w-lg text-sm leading-6 text-muted-foreground dark:text-neutral-400">
               A condensed audio pass over markets, tech earnings, and the policy signals shaping today’s desk.
             </p>
             <button
               onClick={() => toggle("ep-1")}
-              className="relative mt-6 inline-flex h-11 items-center gap-2 rounded-full bg-white px-5 text-sm font-semibold text-neutral-950 transition hover:scale-[1.02]"
+              className="relative mt-6 inline-flex h-11 items-center gap-2 rounded-full bg-foreground px-5 text-sm font-semibold text-background transition hover:scale-[1.02] dark:bg-white dark:text-neutral-950"
             >
               {playingId === "ep-1" ? <Pause size={15} fill="currentColor" /> : <Play size={15} fill="currentColor" className="ml-0.5" />}
               {playingId === "ep-1" ? "Pause brief" : "Play brief"}
             </button>
           </div>
-          <div className="min-h-[200px] border-t border-white/[.07] md:border-l md:border-t-0">
+          <div className="min-h-[200px] border-t border-foreground/[.07] md:border-l md:border-t-0">
             <img src={EPISODES[0].image} alt="" className="h-full w-full object-cover opacity-80" />
           </div>
         </div>
@@ -84,10 +84,10 @@ export default function AudioLibraryView({ onPlayEpisode }: AudioLibraryViewProp
 
       <div className="mb-4 flex items-end justify-between gap-3">
         <div>
-          <h2 className="text-lg font-semibold text-white">Library</h2>
-          <p className="mt-1 text-xs text-neutral-500">Briefs and podcast-style desk episodes</p>
+          <h2 className="text-lg font-semibold text-foreground dark:text-white">Library</h2>
+          <p className="mt-1 text-xs text-muted-foreground dark:text-neutral-500">Briefs and podcast-style desk episodes</p>
         </div>
-        <Headphones size={16} className="text-neutral-600" />
+        <Headphones size={16} className="text-muted-foreground/80 dark:text-neutral-600" />
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2">
@@ -102,16 +102,16 @@ export default function AudioLibraryView({ onPlayEpisode }: AudioLibraryViewProp
                 "flex gap-3 rounded-xl border p-3 text-left transition",
                 active
                   ? "border-sidebar-primary/30 bg-sidebar-primary/[.08]"
-                  : "border-white/[.08] bg-[#0b121c]/55 hover:border-white/[.14] hover:bg-white/[.03]"
+                  : "border-foreground/[.08] bg-chrome/55 hover:border-foreground/[.14] hover:bg-foreground/[.03]"
               )}
             >
               <img src={episode.image} alt="" className="h-20 w-20 shrink-0 rounded-lg object-cover" />
               <div className="min-w-0 flex-1 py-0.5">
-                <p className="line-clamp-2 text-sm font-semibold text-white">{episode.title}</p>
-                <p className="mt-1 text-[11px] text-neutral-500">{episode.meta}</p>
-                <div className="mt-3 flex items-center justify-between text-[11px] text-neutral-500">
+                <p className="line-clamp-2 text-sm font-semibold text-foreground dark:text-white">{episode.title}</p>
+                <p className="mt-1 text-[11px] text-muted-foreground dark:text-neutral-500">{episode.meta}</p>
+                <div className="mt-3 flex items-center justify-between text-[11px] text-muted-foreground dark:text-neutral-500">
                   <span>{episode.duration}</span>
-                  <span className={cn("flex h-7 w-7 items-center justify-center rounded-full", active ? "bg-white text-neutral-950" : "bg-white/10 text-white")}>
+                  <span className={cn("flex h-7 w-7 items-center justify-center rounded-full", active ? "bg-foreground text-background dark:bg-white dark:text-neutral-950" : "bg-foreground/10 text-foreground dark:text-white")}>
                     {active ? <Pause size={12} fill="currentColor" /> : <Play size={12} fill="currentColor" className="ml-0.5" />}
                   </span>
                 </div>

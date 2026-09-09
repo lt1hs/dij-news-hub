@@ -38,7 +38,7 @@ export function NewsCardTabs({
       animate={{ scale: 1, opacity: 1 }}
       transition={{ type: "spring", stiffness: 300, damping: 26 }}
       className={cn(
-        "bg-black/20 border border-white/10 rounded-full flex items-center p-1 shadow-lg space-x-1 w-full h-[40px]",
+        "bg-black/20 border border-foreground/10 rounded-full flex items-center p-1 shadow-lg space-x-1 w-full h-[40px]",
         className,
       )}
     >
@@ -54,7 +54,7 @@ export function NewsCardTabs({
               "flex items-center gap-0 px-2 py-1.5 rounded-full transition-colors duration-200 relative h-8 min-w-[32px] flex-1",
               isActive
                 ? "bg-primary/20 text-primary gap-1.5"
-                : "bg-transparent text-muted-foreground hover:bg-white/10",
+                : "bg-transparent text-muted-foreground hover:bg-foreground/10",
               "focus:outline-none focus-visible:ring-0",
             )}
             onClick={() => handleTabClick(idx)}

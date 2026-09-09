@@ -1,0 +1,40 @@
+{
+  "header.searchPlaceholder": "بحث عن معلومات",
+  "header.dailyInsights": "الرؤى اليومية",
+  "header.logout": "تسجيل الخروج",
+  "header.joinFusion": "انضم إلينا",
+  "header.tagline": "مكتب الاستخبارات",
+  "language.toggleLabel": "تبديل اللغة",
+  "language.english": "الإنجليزية",
+  "language.arabic": "العربية",
+
+  "common.save": "حفظ",
+  "common.cancel": "إلغاء",
+  "common.close": "إغلاق",
+  "common.loading": "جار التحميل...",
+
+  "newsFeed.latestNews": "آخر الأخبار",
+  "newsFeed.viewAll": "عرض الكل",
+  "newsFeed.linkReady": "الرابط جاهز",
+  "newsFeed.timeAgo.lessThanHour": "منذ أقل من ساعة",
+
+  "settings.language": "اللغة",
+  "settings.languageDescription": "اختر لغة الواجهة المفضّلة لديك",
+
+  "sidebar.forYou": "من أجلك",
+  "sidebar.headlines": "العناوين",
+  "sidebar.latest": "الأحدث",
+  "sidebar.tracking": "التتبع",
+  "sidebar.saved": "المحفوظات",
+  "sidebar.audio": "الصوتيات",
+  "sidebar.notifications": "الإشعارات",
+  "sidebar.settings": "الإعدادات",
+  "sidebar.profile": "الملف الشخصي",
+  "sidebar.proTier": "العضوية المميزة",
+  "sidebar.user": "المستخدم",
+  "sidebar.closeNavigation": "إغلاق التنقل",
+  "sidebar.closeMenu": "إغلاق القائمة",
+  "sidebar.collapseSidebar": "طي الشريط الجانبي",
+  "sidebar.expandSidebar": "توسيع الشريط الجانبي",
+  "sidebar.signOut": "تسجيل الخروج"
+}

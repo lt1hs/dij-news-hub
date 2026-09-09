@@ -12,22 +12,22 @@ const HOTSPOTS = [
 
 export default function ImpactMap() {
     return (
-        <div className="flex flex-col gap-4 p-5 rounded-[15px] border border-white/5 bg-white/[0.01] backdrop-blur-3xl shadow-2xl mt-6">
+        <div className="flex flex-col gap-4 p-5 rounded-[15px] border border-foreground/5 bg-foreground/[0.01] backdrop-blur-3xl shadow-2xl mt-6">
             <div className="flex items-center justify-between mb-2">
-                <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-neutral-500 flex items-center gap-2">
+                <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground dark:text-neutral-500 flex items-center gap-2">
                     <Globe size={14} className="text-sidebar-primary" />
                     Global Signals
                 </h3>
-                <button className="p-1 rounded-md hover:bg-white/5 transition-colors text-neutral-500 hover:text-white">
+                <button className="p-1 rounded-md hover:bg-foreground/5 transition-colors text-muted-foreground dark:text-neutral-500 hover:text-foreground dark:hover:text-white">
                     <Maximize2 size={12} />
                 </button>
             </div>
 
-            <div className="relative aspect-[16/9] w-full bg-black/40 rounded-xl overflow-hidden border border-white/5 group">
+            <div className="relative aspect-[16/9] w-full bg-black/40 rounded-xl overflow-hidden border border-foreground/5 group on-media">
                 {/* Abstract Map Background (Grid style) */}
                 <div
                     className="absolute inset-0 opacity-20"
-                    style={{ backgroundImage: 'radial-gradient(circle, #333 1px, transparent 1px)', backgroundSize: '15px 15px' }}
+                    style={{ backgroundImage: 'radial-gradient(circle, hsl(var(--foreground) / 0.28) 1px, transparent 1px)', backgroundSize: '15px 15px' }}
                 />
 
                 {/* Animated Hotspots */}
@@ -60,26 +60,26 @@ export default function ImpactMap() {
 
                 {/* Overlay Info */}
                 <div className="absolute top-3 left-3 flex flex-col gap-1 pointer-events-none">
-                    <div className="flex items-center gap-2 px-2 py-1 rounded-md bg-black/60 backdrop-blur-md border border-white/10">
+                    <div className="flex items-center gap-2 px-2 py-1 rounded-md bg-black/60 backdrop-blur-md border border-foreground/10">
                         <Radar size={10} className="text-sidebar-primary animate-pulse" />
                         <span className="text-[8px] font-bold text-white uppercase tracking-widest">Active Scan: EMEA Zone</span>
                     </div>
                 </div>
 
                 <div className="absolute bottom-3 right-3 flex flex-col items-end gap-1">
-                    <span className="text-[10px] font-black text-white/40 tracking-widest">0.842ms LATNCY</span>
-                    <span className="text-[9px] font-bold text-neutral-500 uppercase">Live Intelligence Vector</span>
+                    <span className="text-[10px] font-black text-white/50 tracking-widest">0.842ms LATNCY</span>
+                    <span className="text-[9px] font-bold text-white/55 uppercase">Live Intelligence Vector</span>
                 </div>
             </div>
 
             {/* Micro Metrics */}
             <div className="grid grid-cols-2 gap-3 mt-1">
                 <div className="flex flex-col">
-                    <span className="text-[9px] font-bold text-neutral-600 uppercase tracking-tighter">Peak Density</span>
-                    <span className="text-[12px] font-bold text-white">European Sector</span>
+                    <span className="text-[9px] font-bold text-muted-foreground/80 dark:text-neutral-600 uppercase tracking-tighter">Peak Density</span>
+                    <span className="text-[12px] font-bold text-foreground dark:text-white">European Sector</span>
                 </div>
                 <div className="flex flex-col items-end">
-                    <span className="text-[9px] font-bold text-neutral-600 uppercase tracking-tighter">Signal Health</span>
+                    <span className="text-[9px] font-bold text-muted-foreground/80 dark:text-neutral-600 uppercase tracking-tighter">Signal Health</span>
                     <span className="text-[12px] font-bold text-green-500 flex items-center gap-1.5">
                         <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
                         98.2%

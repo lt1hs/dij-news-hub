@@ -2,92 +2,104 @@
 @tailwind components;
 @tailwind utilities;
 
-/* LIGHT MODE */
+/* LIGHT MODE — editorial newsroom paper, not a generic gray invert */
 :root {
-  --button-outline: rgba(0,0,0, .10);
-  --badge-outline: rgba(0,0,0, .05);
+  color-scheme: light;
+  --button-outline: rgba(15, 23, 42, .10);
+  --badge-outline: rgba(15, 23, 42, .06);
 
   /* Automatic computation of border around primary / danger buttons */
   --opaque-button-border-intensity: -8; /* In terms of percentages */
 
   /* Backgrounds applied on top of other backgrounds when hovered/active */
-  --elevate-1: rgba(0,0,0, .03);
-  --elevate-2: rgba(0,0,0, .08);
+  --elevate-1: rgba(15, 23, 42, .035);
+  --elevate-2: rgba(15, 23, 42, .07);
 
-  --background: 0 0% 98%;
+  --background: 210 29% 97%;
 
-  --foreground: 220 8% 15%;
+  --foreground: 222 47% 11%;
 
-  --border: 220 8% 88%;
+  --border: 214 25% 86%;
 
   --card: 0 0% 100%;
 
-  --card-foreground: 220 8% 15%;
+  --card-foreground: 222 47% 11%;
 
-  --card-border: 220 8% 92%;
+  --card-border: 214 32% 90%;
 
-  --sidebar: 220 8% 96%;
+  --sidebar: 210 28% 95%;
 
-  --sidebar-foreground: 220 8% 15%;
+  --sidebar-foreground: 222 47% 11%;
 
-  --sidebar-border: 220 8% 90%;
+  --sidebar-border: 214 24% 88%;
 
-  --sidebar-primary: 210 100% 60%;
+  --sidebar-primary: 211 100% 46%;
 
-  --sidebar-primary-foreground: 0 0% 98%;
+  --sidebar-primary-foreground: 0 0% 100%;
 
-  --sidebar-accent: 220 8% 94%;
+  --sidebar-accent: 210 32% 93%;
 
-  --sidebar-accent-foreground: 220 8% 15%;
+  --sidebar-accent-foreground: 222 47% 11%;
 
-  --sidebar-ring: 210 100% 60%;
+  --sidebar-ring: 211 100% 46%;
 
   --popover: 0 0% 100%;
 
-  --popover-foreground: 220 8% 15%;
+  --popover-foreground: 222 47% 11%;
 
-  --popover-border: 220 8% 90%;
+  --popover-border: 214 24% 88%;
 
-  --primary: 210 100% 60%;
+  --primary: 211 100% 46%;
 
-  --primary-foreground: 0 0% 98%;
+  --primary-foreground: 0 0% 100%;
 
-  --secondary: 220 8% 94%;
+  --secondary: 210 28% 94%;
 
-  --secondary-foreground: 220 8% 15%;
+  --secondary-foreground: 222 47% 11%;
 
-  --muted: 220 8% 96%;
+  --muted: 210 25% 94%;
 
-  --muted-foreground: 0 0% 45%;
+  --muted-foreground: 215 16% 38%;
 
-  --accent: 220 8% 95%;
+  --accent: 210 40% 96%;
 
-  --accent-foreground: 220 8% 15%;
+  --accent-foreground: 222 47% 11%;
 
-  --destructive: 0 84% 60%;
+  --destructive: 0 72% 51%;
 
-  --destructive-foreground: 0 0% 98%;
+  --destructive-foreground: 0 0% 100%;
 
-  --input: 220 8% 85%;
-  --ring: 210 100% 60%;
-  --chart-1: 210 100% 50%;
-  --chart-2: 250 100% 60%;
-  --chart-3: 32 100% 50%;
-  --chart-4: 120 50% 50%;
-  --chart-5: 340 75% 55%;
+  --input: 214 22% 82%;
+  --ring: 211 100% 46%;
+  --chart-1: 211 100% 46%;
+  --chart-2: 250 84% 56%;
+  --chart-3: 32 95% 48%;
+  --chart-4: 152 48% 40%;
+  --chart-5: 340 75% 48%;
+
+  /* Surfaces that match dark navy chrome 1:1 when .dark is on */
+  --chrome: 0 0% 100%;
+  --chrome-deep: 210 29% 97%;
+  --chrome-panel: 0 0% 100%;
+  --chrome-raised: 210 33% 98%;
+  --chrome-overlay: 222 47% 11%;
+
+  --desk-shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+  --desk-shadow-lg: 0 28px 80px rgba(15, 23, 42, 0.12);
+  --pixel-canvas-opacity: 0.42;
 
   --font-sans: Inter, system-ui, -apple-system, sans-serif;
   --font-serif: Georgia, serif;
   --font-mono: Menlo, monospace;
   --radius: .5rem; /* 8px */
-  --shadow-2xs: 0px 2px 0px 0px hsl(220 8% 20% / 0.02);
-  --shadow-xs: 0px 2px 0px 0px hsl(220 8% 20% / 0.03);
-  --shadow-sm: 0px 2px 0px 0px hsl(220 8% 20% / 0.04), 0px 1px 2px -1px hsl(220 8% 20% / 0.08);
-  --shadow: 0px 2px 0px 0px hsl(220 8% 20% / 0.04), 0px 1px 2px -1px hsl(220 8% 20% / 0.08);
-  --shadow-md: 0px 2px 0px 0px hsl(220 8% 20% / 0.04), 0px 2px 4px -1px hsl(220 8% 20% / 0.10);
-  --shadow-lg: 0px 2px 0px 0px hsl(220 8% 20% / 0.04), 0px 4px 6px -1px hsl(220 8% 20% / 0.12);
-  --shadow-xl: 0px 2px 0px 0px hsl(220 8% 20% / 0.04), 0px 8px 10px -1px hsl(220 8% 20% / 0.14);
-  --shadow-2xl: 0px 2px 0px 0px hsl(220 8% 20% / 0.06);
+  --shadow-2xs: 0px 1px 2px 0px hsl(222 47% 11% / 0.04);
+  --shadow-xs: 0px 1px 2px 0px hsl(222 47% 11% / 0.05);
+  --shadow-sm: 0px 1px 2px 0px hsl(222 47% 11% / 0.05), 0px 1px 3px -1px hsl(222 47% 11% / 0.08);
+  --shadow: 0px 1px 3px 0px hsl(222 47% 11% / 0.06), 0px 1px 2px -1px hsl(222 47% 11% / 0.08);
+  --shadow-md: 0px 4px 12px -2px hsl(222 47% 11% / 0.08), 0px 2px 6px -2px hsl(222 47% 11% / 0.06);
+  --shadow-lg: 0px 12px 32px -8px hsl(222 47% 11% / 0.12), 0px 4px 10px -4px hsl(222 47% 11% / 0.06);
+  --shadow-xl: 0px 20px 48px -12px hsl(222 47% 11% / 0.14);
+  --shadow-2xl: 0px 28px 64px -16px hsl(222 47% 11% / 0.16);
   --tracking-normal: 0em;
   --spacing: 0.25rem;
 
@@ -123,6 +135,7 @@
 }
 
 .dark {
+  color-scheme: dark;
   --button-outline: rgba(255,255,255, .10);
   --badge-outline: rgba(255,255,255, .05);
 
@@ -204,6 +217,26 @@
   --shadow-xl: 0px 2px 0px 0px hsl(220 8% 4% / 0.25), 0px 8px 10px -1px hsl(220 8% 4% / 0.45);
   --shadow-2xl: 0px 2px 0px 0px hsl(220 8% 4% / 0.30);
 
+  --chrome: 216 49% 8.4%;
+  --chrome-deep: 216 38% 5.7%;
+  --chrome-panel: 216 36% 6.7%;
+  --chrome-raised: 214 33% 10.2%;
+  --chrome-overlay: 216 50% 3.1%;
+
+  --desk-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  --desk-shadow-lg: 0 28px 90px rgba(0, 0, 0, 0.58);
+  --pixel-canvas-opacity: 0.22;
+
+}
+
+/* RTL: applied automatically via document.documentElement.dir from LanguageProvider */
+[dir="rtl"] {
+  --font-sans: 'IBM Plex Sans Arabic', Inter, system-ui, -apple-system, sans-serif;
+}
+
+/* Opt-in mirroring for directional icons (chevrons/arrows) only — never applied blanket */
+[dir="rtl"] .rtl-flip {
+  transform: scaleX(-1);
 }
 
 @layer base {
@@ -211,9 +244,14 @@
     @apply border-border;
   }
 
+  html {
+    background-color: hsl(var(--background));
+  }
+
   body {
     @apply font-sans antialiased bg-background text-foreground;
     overflow-x: hidden;
+    transition: background-color 200ms ease, color 200ms ease;
   }
 }
 
@@ -354,5 +392,51 @@
 
   .no-scrollbar::-webkit-scrollbar {
     display: none;
+  }
+
+  .desk-shadow {
+    box-shadow: var(--desk-shadow);
+  }
+
+  .desk-shadow-lg {
+    box-shadow: var(--desk-shadow-lg);
+  }
+
+  .pixel-stage {
+    background: linear-gradient(135deg, #f3f6fa 0%, #eef3f8 55%, #f7f9fc 100%);
+  }
+
+  .dark .pixel-stage {
+    background: linear-gradient(135deg, #0b1119 0%, #0a1018 55%, #0d1520 100%);
+  }
+
+  .pixel-veil {
+    background: radial-gradient(circle at top, rgba(37, 99, 235, 0.16) 0%, transparent 58%);
+  }
+
+  .dark .pixel-veil {
+    background: radial-gradient(circle at top, rgba(30, 64, 110, 0.3) 0%, transparent 58%);
+  }
+
+  .pixel-horizon {
+    background-image: linear-gradient(to bottom, rgb(191 219 254 / 0.55), transparent);
+  }
+
+  .dark .pixel-horizon {
+    background-image: linear-gradient(to bottom, rgb(16 28 43 / 0.5), transparent);
+  }
+
+  .pixel-canvas {
+    opacity: var(--pixel-canvas-opacity);
+  }
+
+  html.light .pixel-canvas {
+    mix-blend-mode: multiply;
+  }
+
+  /* Copy sitting on photography stays white in both themes */
+  .on-media,
+  .on-media .on-media-ink {
+    color: #fff;
   }
 }
