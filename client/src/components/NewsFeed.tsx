@@ -1,18 +1,18 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, type CSSProperties } from "react";
 import { useQuery } from "@tanstack/react-query";
 import TopHeadlinesSlider from "./TopHeadlinesSlider";
 import CategoryBar from "./CategoryBar";
 import NewsCard from "./NewsCard";
-import ResourceSidebar from "./ResourceSidebar";
-import TrendingSidebar from "./TrendingSidebar";
-import LiveTicker from "./LiveTicker";
+import IntelligenceSidebar from "./IntelligenceSidebar";
 import AudioHub from "./AudioHub";
 import ArticleFocusMode from "./ArticleFocusMode";
 import DynamicPane from "./DynamicPane";
 import Sidebar from "./Sidebar";
-import { DotLoader } from "@/components/ui/dot-loader";
-import { useAuth } from "@/hooks/useAuth";
+import TrackingView from "./TrackingView";
+import HeadlinesView from "./HeadlinesView";
+import { SymmetricWave } from "@/components/ui/symmetric-wave";
 import { useSidebar } from "@/hooks/useSidebar";
+import { cn } from "@/lib/utils";
 
 import { Article } from "@shared/schema";
 
@@ -23,6 +23,7 @@ interface NewsFeedProps {
 
 export default function NewsFeed({ paneCompact, setPaneCompact }: NewsFeedProps) {
   const { collapsed } = useSidebar();
+  const [activeView, setActiveView] = useState("explore");
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [focusArticle, setFocusArticle] = useState<Article | null>(null);
   const [isFocusOpen, setIsFocusOpen] = useState(false);
@@ -73,27 +74,38 @@ export default function NewsFeed({ paneCompact, setPaneCompact }: NewsFeedProps)
   };
 
   return (
-    <div className="flex min-h-screen bg-background text-foreground selection:bg-sidebar-primary/30">
-      <Sidebar />
+    <div className={cn("relative min-h-screen bg-transparent text-foreground selection:bg-sidebar-primary/30 overflow-x-clip", isFocusOpen ? "z-[100]" : "z-10")}>
+      <Sidebar activeView={activeView} onViewChange={setActiveView} />
 
-      <main className="flex-1 transition-all duration-300 md:ml-20 mr-20">
+      <main className={cn("min-w-0 transition-[margin] duration-300", collapsed ? "md:ml-16" : "md:ml-[220px]")}>
 
-        {/* Cinematic Header Spacer for Live Ticker */}
-        <LiveTicker />
-
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-[4rem] pb-32">
-          <div className="max-w-[1350px] mx-auto">
-
+        {activeView === "tracking" ? (
+          <TrackingView />
+        ) : activeView === "headlines" ? (
+          <HeadlinesView articles={articles} onOpen={handleArticleClick} />
+        ) : (
+        <div className="pt-14 pb-28">
+          <div className="px-4">
             <TopHeadlinesSlider />
+          </div>
+
+          <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
             <CategoryBar />
 
-            <div className="flex gap-8 items-start mt-4">
-              <ResourceSidebar />
+            <IntelligenceSidebar mobile className="mb-7 lg:hidden" />
 
-              <div className="flex-1 min-w-0">
-                <div className="space-y-6">
+            <div className="grid grid-cols-1 items-start gap-7 lg:grid-cols-[minmax(0,1fr)_340px] xl:grid-cols-[minmax(0,1fr)_360px] xl:gap-9">
+              <section className="min-w-0" aria-label="Latest news">
+                <div className="mb-4 flex items-end justify-between gap-4">
+                  <div>
+                    <h2 className="text-2xl font-semibold tracking-tight text-white">Latest news</h2>
+                    <p className="mt-1 text-xs text-neutral-500">Reporting from sources across your selected topics</p>
+                  </div>
+                  <button className="hidden text-xs font-medium text-neutral-400 transition hover:text-white sm:inline">View all</button>
+                </div>
+                <div className="overflow-hidden rounded-xl border border-white/[.08] bg-[#0b121c]/55 divide-y divide-white/[.08]">
                   {articles.map((article: Article) => (
-                    <div key={article.id} onClick={() => handleArticleClick(article)} className="cursor-pointer">
+                    <div key={article.id}>
                       <NewsCard
                         id={article.id}
                         title={article.title}
@@ -110,20 +122,24 @@ export default function NewsFeed({ paneCompact, setPaneCompact }: NewsFeedProps)
                         onChatClick={() => setPaneCompact(false)}
                         onPlayClick={() => handlePlayClick(article.id)}
                         onShareClick={() => console.log('Share Triggered')}
+                        onClick={() => handleArticleClick(article)}
                       />
                     </div>
                   ))}
                 </div>
 
-                <div ref={loaderRef} className="flex justify-center mt-12 p-8">
-                  {isLoadingMore && <DotLoader frames={[[0, 1, 2], [7, 8, 9], [14, 15, 16]]} dotClassName="w-2 h-2 rounded-sm" duration={150} />}
+                <div ref={loaderRef} className="flex min-h-24 items-center justify-center py-8">
+                  {isLoadingMore && (
+                    <SymmetricWave className="text-base text-sidebar-primary" style={{ "--duration": "1.6s" } as CSSProperties} />
+                  )}
                 </div>
-              </div>
+              </section>
 
-              <TrendingSidebar />
+              <IntelligenceSidebar className="hidden lg:block" />
             </div>
           </div>
         </div>
+        )}
 
         <DynamicPane isCompact={paneCompact} onToggleCompact={() => setPaneCompact(!paneCompact)} />
         <AudioHub isOpen={isAudioOpen} onClose={() => setIsAudioOpen(false)} />

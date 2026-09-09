@@ -120,7 +120,7 @@ export default function PixelBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pixelsRef = useRef<Pixel[]>([]);
   const animationRef = useRef<number | null>(null);
-  const timeIntervalRef = useRef<number>(1000 / 60);
+  const timeIntervalRef = useRef<number>(1000 / 30);
   const timePreviousRef = useRef<number>(performance.now());
 
   useEffect(() => {
@@ -130,8 +130,8 @@ export default function PixelBackground() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const colors = ["#ffd700", "#ffed4e", "#fbbf24", "#f59e0b", "#d97706", "#b45309"];
-    const gap = 8;
+    const colors = ["#60a5fa", "#3b82f6", "#2563eb", "#64748b"];
+    const gap = 12;
     const speed = 60 * 0.001; // Convert to match provided code
 
     const getDistanceToBottomCenter = (x: number, y: number, canvasWidth: number, canvasHeight: number) => {
@@ -163,7 +163,7 @@ export default function PixelBackground() {
       for (let x = 0; x < width; x += gap) {
         for (let y = 0; y < height; y += gap) {
           const color = colors[Math.floor(Math.random() * colors.length)];
-          const delay = getDistanceToBottomCenter(x, y, width, height);
+          const delay = getDistanceToBottomCenter(x, y, width, height) * 0.35;
           
           pixelsRef.current.push(
             new Pixel(canvas, ctx, x, y, color, speed, delay)
@@ -225,15 +225,15 @@ export default function PixelBackground() {
       <div 
         className="absolute inset-0 w-full h-full"
         style={{ 
-          background: 'linear-gradient(135deg, #11263E 0%, #0a1a2e 50%, #16213e 100%)' 
+          background: 'linear-gradient(135deg, #0b1119 0%, #0a1018 55%, #0d1520 100%)' 
         }}
       />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(17,38,62,0.8)_0%,_transparent_100%)]" />
-      <div className="absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-[#11263E] to-transparent" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(30,64,110,0.3)_0%,_transparent_58%)]" />
+      <div className="absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-[#101c2b]/50 to-transparent" />
       
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 w-full h-full opacity-30"
+        className="absolute inset-0 w-full h-full opacity-[0.22] [mask-image:linear-gradient(to_bottom,black,rgba(0,0,0,.72)_60%,transparent)]"
         style={{ 
           display: 'grid',
           inlineSize: '100%',

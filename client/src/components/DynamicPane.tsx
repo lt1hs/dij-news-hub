@@ -58,24 +58,24 @@ export default function DynamicPane({ isCompact, onToggleCompact }: DynamicPaneP
 
   if (isCompact) {
     return (
-      <div className="fixed top-0 right-0 w-12 h-screen bg-white/5 border-l border-white/10 z-40 flex flex-col">
+      <div className="fixed bottom-4 left-4 right-4 z-[65] sm:left-auto sm:w-[390px]">
         <button
           onClick={onToggleCompact}
-          className="flex items-center justify-center h-12 w-12 text-muted-foreground hover:text-foreground hover:bg-accent transition border-b border-white/10"
+          aria-label="Open AI assistant"
+          className="group relative flex h-14 w-full items-center gap-3 rounded-2xl border border-white/[.12] bg-[#111923]/90 px-4 text-left shadow-[0_16px_45px_rgba(0,0,0,.45)] backdrop-blur-2xl transition hover:border-white/20"
         >
-          <ChevronLeft className="w-4 h-4" />
+          <span className="min-w-0 flex-1 text-sm text-neutral-500">Ask about the news…</span>
+          <Mic className="h-5 w-5 text-neutral-500" />
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-neutral-400 transition group-hover:bg-white group-hover:text-neutral-950"><Send className="h-4 w-4" /></span>
         </button>
-        <div className="flex-1 flex flex-col items-center justify-center gap-4">
-          <MessageCircle className="w-5 h-5 text-muted-foreground" />
-        </div>
       </div>
     );
   }
 
   return (
-    <div className="fixed top-0 right-0 w-80 h-screen border border-white/10 bg-white/5 shadow-2xl shadow-black/40 backdrop-blur-sm border-l border-white/10 z-40 flex flex-col">
+    <div className="fixed inset-y-3 right-3 z-[80] flex w-[min(360px,calc(100vw-1.5rem))] flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0a101a]/90 shadow-[0_24px_80px_rgba(0,0,0,.65)] backdrop-blur-2xl sm:inset-y-4 sm:right-4">
       {/* Header */}
-      <div className="flex items-center justify-between p-2 border-b border-white/10 bg-white/5 flex-shrink-0">
+      <div className="flex items-center justify-between p-3 border-b border-white/10 bg-white/5 flex-shrink-0">
         <div className="flex items-center gap-2">
           {showChat && (
             <button
@@ -99,9 +99,10 @@ export default function DynamicPane({ isCompact, onToggleCompact }: DynamicPaneP
         </div>
         <button
           onClick={onToggleCompact}
-          className="inline-flex items-center justify-center h-5 w-5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent ring-1 ring-transparent hover:ring-border focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 transition"
+          aria-label="Close AI assistant"
+          className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground ring-1 ring-transparent transition hover:bg-accent hover:text-foreground hover:ring-border focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
         >
-          <ChevronRight className="w-2.5 h-2.5" />
+          <X className="h-4 w-4" />
         </button>
       </div>
 

@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { Search, Menu, ChevronDown, ArrowRight, MessageCircle, Sparkles, Command } from "lucide-react";
+import { Search, Menu, ArrowRight, MessageCircle, Sparkles, Command } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { useSidebar } from "@/hooks/useSidebar";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import LiveTicker from "@/components/LiveTicker";
 import { cn } from "@/lib/utils";
 
 interface HeaderProps {
@@ -12,7 +13,7 @@ interface HeaderProps {
 
 export default function Header({ onPaneToggle }: HeaderProps) {
   const { isAuthenticated } = useAuth();
-  const { setMobileOpen } = useSidebar();
+  const { setMobileOpen, collapsed } = useSidebar();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -33,13 +34,19 @@ export default function Header({ onPaneToggle }: HeaderProps) {
     <>
       <div className="h-24"></div>
 
-      <header className="fixed z-[60] top-4 left-1/2 -translate-x-1/2 w-[min(1350px,94vw)]">
+      <motion.header
+        layout
+        initial={false}
+        animate={{ top: scrolled ? 8 : 16 }}
+        transition={{ type: "spring", stiffness: 320, damping: 34 }}
+        className={cn("fixed z-[60] left-4 right-4 transition-[left] duration-300", collapsed ? "md:left-20" : "md:left-[236px]")}
+      >
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           className={cn(
-            "relative w-full rounded-[8px] border border-white/10 bg-white/[0.03] backdrop-blur-md px-4 py-2.5 transition-all duration-300 shadow-2xl shadow-black/40",
-            scrolled ? "bg-white/[0.05] border-white/20 shadow-primary/5" : ""
+            "relative w-full border border-white/10 bg-[#0b1320]/70 backdrop-blur-xl px-3 sm:px-4 transition-all duration-300 shadow-2xl shadow-black/40",
+            scrolled ? "rounded-t-xl rounded-b-none border-b-white/5 bg-[#0b1320]/90 py-1.5 shadow-primary/5" : "rounded-xl py-2.5"
           )}
         >
           <div className="absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
@@ -48,7 +55,7 @@ export default function Header({ onPaneToggle }: HeaderProps) {
             <a href="#" className="group flex items-center gap-3 focus:outline-none">
               <motion.div
                 whileHover={{ scale: 1.05, rotate: 5 }}
-                className="h-9 w-9 rounded-xl bg-gradient-to-br from-sidebar-primary/20 to-blue-500/10 border border-white/10 flex items-center justify-center shadow-lg"
+                className={cn("rounded-xl bg-gradient-to-br from-sidebar-primary/20 to-blue-500/10 border border-white/10 flex items-center justify-center shadow-lg transition-all", scrolled ? "h-8 w-8" : "h-9 w-9")}
               >
                 <Sparkles className="h-4.5 w-4.5 text-sidebar-primary drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
               </motion.div>
@@ -56,34 +63,14 @@ export default function Header({ onPaneToggle }: HeaderProps) {
                 <span className="text-[17px] font-bold tracking-tight text-white transition-colors group-hover:text-sidebar-primary">
                   News<span className="opacity-80">Fusion</span>
                 </span>
-                <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-widest mt-0.5">Engineered for Truth</span>
+                {!scrolled && <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-widest mt-0.5">Engineered for Truth</span>}
               </div>
             </a>
 
-            <nav className="hidden lg:flex items-center gap-1">
-              {[
-                { label: "Feed", href: "#" },
-                { label: "Trending", href: "#" },
-                { label: "Categories", href: "#", hasIcon: true },
-                { label: "Saved", href: "#" },
-              ].map((item) => (
-                <motion.a
-                  key={item.label}
-                  href={item.href}
-                  whileHover={{ y: -1 }}
-                  whileTap={{ y: 0 }}
-                  className="px-4 py-2 rounded-xl text-[14px] font-medium text-neutral-400 hover:text-white hover:bg-white/[0.05] transition-all flex items-center gap-1"
-                >
-                  {item.label}
-                  {item.hasIcon && <ChevronDown size={14} className="opacity-50" />}
-                </motion.a>
-              ))}
-            </nav>
-
-            <div className="flex items-center gap-2">
+            <div className="flex flex-1 items-center justify-end gap-2">
               <motion.button
                 whileHover={{ scale: 1.02 }}
-                className="hidden md:flex items-center gap-3 bg-white/[0.05] border border-white/5 rounded-xl px-4 py-2 text-neutral-400 hover:text-white hover:bg-white/[0.08] transition-all group"
+                className={cn("hidden md:flex w-full items-center gap-3 bg-white/[0.05] border border-white/5 rounded-xl px-4 text-neutral-400 hover:text-white hover:bg-white/[0.08] transition-all group", scrolled ? "max-w-[260px] py-1.5" : "max-w-sm py-2")}
               >
                 <Search size={16} className="group-hover:text-sidebar-primary transition-colors" />
                 <span className="text-[13px] font-medium pr-8 whitespace-nowrap">Search Information</span>
@@ -115,7 +102,7 @@ export default function Header({ onPaneToggle }: HeaderProps) {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={handleLogout}
-                  className="hidden md:flex items-center justify-center px-4 py-2 rounded-xl text-[13px] font-bold text-neutral-400 hover:text-white transition-all"
+                  className={cn("hidden md:flex items-center justify-center rounded-xl text-[13px] font-bold text-neutral-400 hover:text-white transition-all", scrolled ? "px-3 py-1.5" : "px-4 py-2")}
                 >
                   Logout
                 </motion.button>
@@ -140,7 +127,10 @@ export default function Header({ onPaneToggle }: HeaderProps) {
             </div>
           </div>
         </motion.div>
-      </header>
+        <motion.div layout className={cn("transition-all duration-300", scrolled ? "mt-0" : "mt-2")}>
+          <LiveTicker compact={scrolled} />
+        </motion.div>
+      </motion.header>
     </>
   );
 }

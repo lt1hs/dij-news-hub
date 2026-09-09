@@ -86,7 +86,7 @@ export default function TopHeadlinesSlider() {
 
   return (
     <div
-      className="relative w-full rounded-[15px] border border-white/10 bg-black/20 backdrop-blur-md overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] h-[400px] flex group"
+      className="relative w-full rounded-[15px] border border-white/10 bg-black/20 backdrop-blur-md overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] h-[390px] sm:h-[400px] flex group"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -116,12 +116,12 @@ export default function TopHeadlinesSlider() {
       <div className="relative z-10 w-full flex h-full">
 
         {/* Left Section: Active Detail (65%) */}
-        <div className="w-[65%] flex flex-col justify-between p-8">
+        <div className="w-full md:w-[65%] flex flex-col justify-between p-5 sm:p-8">
           {/* Top Label */}
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-3"
+            className="flex flex-wrap items-center gap-2 sm:gap-3"
           >
             <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-sidebar-primary/20 border border-sidebar-primary/30 text-sidebar-primary text-[10px] font-bold uppercase tracking-widest">
               <TrendingUp size={12} />
@@ -152,11 +152,11 @@ export default function TopHeadlinesSlider() {
                   </span>
                 </div>
 
-                <h1 className="text-2xl md:text-3xl font-extrabold text-white leading-[1.15] mb-4 tracking-tight">
+                <h1 className="text-[1.65rem] sm:text-3xl font-extrabold text-white leading-[1.12] mb-4 tracking-tight">
                   {activeStory.title}
                 </h1>
 
-                <p className="text-sm text-neutral-400 leading-relaxed mb-6 line-clamp-2 opacity-90">
+                <p className="text-sm text-neutral-300 leading-relaxed mb-6 line-clamp-3 sm:line-clamp-2 opacity-90">
                   {activeStory.description}
                 </p>
 
@@ -164,7 +164,7 @@ export default function TopHeadlinesSlider() {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="px-6 py-2.5 rounded-xl bg-sidebar-primary text-white text-xs font-bold shadow-lg shadow-sidebar-primary/20 hover:shadow-sidebar-primary/40 transition-all flex items-center gap-2"
+                    className="px-5 sm:px-6 py-2.5 rounded-xl bg-sidebar-primary text-white text-xs font-bold shadow-lg shadow-sidebar-primary/20 hover:shadow-sidebar-primary/40 transition-all flex items-center gap-2"
                   >
                     Deep Analysis <ArrowRight size={14} />
                   </motion.button>
@@ -192,7 +192,7 @@ export default function TopHeadlinesSlider() {
         </div>
 
         {/* Right Section: Navigation Rail (35%) */}
-        <div className="w-[35%] border-l border-white/5 bg-white/[0.01] backdrop-blur-xl flex flex-col p-4 gap-3">
+        <div className="hidden md:flex w-[35%] border-l border-white/5 bg-white/[0.01] backdrop-blur-xl flex-col p-4 gap-3">
           <div className="flex items-center justify-between mb-2 px-1">
             <h4 className="text-[10px] font-bold text-neutral-500 uppercase tracking-[0.2em] flex items-center gap-1.5">
               <Sparkles size={12} className="text-sidebar-primary" />

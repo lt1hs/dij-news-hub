@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Activity, Radio } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const NEWS_FLASHES = [
     "BREAKING: Quantum supremacy reached by Sycamore v2 with 99.9% gate fidelity",
@@ -11,14 +12,22 @@ const NEWS_FLASHES = [
     "CLIMATE: Global renewable capacity surges past 4000GW for the first time in history",
 ];
 
-export default function LiveTicker() {
+export default function LiveTicker({ compact = false }: { compact?: boolean }) {
     return (
-        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[55] w-[min(1350px,94vw)]">
-            <div className="relative w-full h-9 bg-white/[0.03] border border-white/10 rounded-[50px] backdrop-blur-xl flex items-center overflow-hidden shadow-2xl">
+        <motion.div
+            layout
+            initial={false}
+            animate={{ height: compact ? 27 : 36 }}
+            transition={{ type: "spring", stiffness: 320, damping: 32 }}
+            className={cn(
+                "relative w-full bg-white/[0.03] border border-white/10 backdrop-blur-xl flex items-center overflow-hidden shadow-2xl transition-[border-radius] duration-300",
+                compact ? "rounded-b-xl rounded-t-none border-t-0" : "rounded-[50px]"
+            )}
+        >
                 {/* Static Prefix */}
-                <div className="flex items-center gap-2 px-4 bg-sidebar-primary/10 border-r border-white/10 h-full text-sidebar-primary text-[10px] font-black tracking-[0.2em] flex-shrink-0 z-20 uppercase">
+                <div className={cn("flex items-center gap-2 px-3 sm:px-4 bg-sidebar-primary/10 border-r border-white/10 h-full text-sidebar-primary font-black tracking-[0.16em] flex-shrink-0 z-20 uppercase transition-all", compact ? "text-[8px]" : "text-[10px]")}>
                     <Activity size={12} className="animate-pulse" />
-                    Intelligence Stream
+                    <span className="hidden sm:inline">Intelligence Stream</span><span className="sm:hidden">Live</span>
                 </div>
 
                 {/* Scrolling Content */}
@@ -31,7 +40,7 @@ export default function LiveTicker() {
                         {[...NEWS_FLASHES, ...NEWS_FLASHES, ...NEWS_FLASHES].map((news, i) => (
                             <div key={i} className="flex items-center gap-3">
                                 <Radio size={12} className="text-neutral-500" />
-                                <span className="text-white text-[11px] font-bold tracking-tight uppercase opacity-90">{news}</span>
+                                <span className={cn("text-white font-bold tracking-tight uppercase opacity-90 transition-all", compact ? "text-[9px]" : "text-[11px]")}>{news}</span>
                                 <div className="h-1 w-1 rounded-full bg-sidebar-primary/40 mx-2" />
                             </div>
                         ))}
@@ -47,7 +56,6 @@ export default function LiveTicker() {
                     <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
                     Live
                 </div>
-            </div>
-        </div>
+        </motion.div>
     );
 }

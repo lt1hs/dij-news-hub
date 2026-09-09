@@ -1,336 +1,50 @@
-"use client";
+import { useState } from "react";
+import { ArrowUp, Check, Circle, Mic, Search, Sparkles, X } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 
-import type React from "react";
-import { useState, useRef } from "react";
-import {
-  Search,
-  Mic,
-  ArrowUp,
-  Plus,
-  FileText,
-  Code,
-  BookOpen,
-  PenTool,
-  BrainCircuit,
-} from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+const SUGGESTIONS = ["What changed today?", "Summarize the top technology stories", "Update my AI tracker"];
 
 export function AIAssistantInterface() {
-  const [inputValue, setInputValue] = useState("");
-  const [searchEnabled, setSearchEnabled] = useState(false);
-  const [deepResearchEnabled, setDeepResearchEnabled] = useState(false);
-  const [reasonEnabled, setReasonEnabled] = useState(false);
-  const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
-  const [showUploadAnimation, setShowUploadAnimation] = useState(false);
-  const [activeCommandCategory, setActiveCommandCategory] = useState<string | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [input, setInput] = useState("");
+  const [query, setQuery] = useState<string | null>(null);
+  const [stage, setStage] = useState(0);
 
-  const commandSuggestions = {
-    learn: [
-      "Explain today's market trends",
-      "What caused the tech sector gains?",
-      "How does inflation affect markets?",
-      "Explain OPEC's oil strategy",
-      "What are AI transparency regulations?",
-    ],
-    code: [
-      "Create a news aggregator component",
-      "Build a sentiment analysis function",
-      "How to implement real-time news updates",
-      "Create a market data visualization",
-      "Build a news filtering system",
-    ],
-    write: [
-      "Summarize today's key news",
-      "Write analysis of market trends",
-      "Create a news briefing email",
-      "Draft social media post about news",
-      "Write investment insights report",
-    ],
-  };
-
-  const handleUploadFile = () => {
-    setShowUploadAnimation(true);
-    setTimeout(() => {
-      const newFile = `Document.pdf`;
-      setUploadedFiles((prev) => [...prev, newFile]);
-      setShowUploadAnimation(false);
-    }, 1500);
-  };
-
-  const handleCommandSelect = (command: string) => {
-    setInputValue(command);
-    setActiveCommandCategory(null);
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  };
-
-  const handleSendMessage = () => {
-    if (inputValue.trim()) {
-      console.log("Sending message:", inputValue);
-      setInputValue("");
-    }
+  const runQuery = (value = input) => {
+    if (!value.trim()) return;
+    setQuery(value.trim());
+    setInput("");
+    setStage(1);
+    window.setTimeout(() => setStage(2), 700);
+    window.setTimeout(() => setStage(3), 1500);
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md mx-auto flex flex-col items-center">
-        {/* Logo with animated gradient */}
-        <div className="mb-4 w-12 h-12 relative">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 200 200"
-            width="100%"
-            height="100%"
-            className="w-full h-full"
-          >
-            <g clipPath="url(#cs_clip_1_ellipse-12)">
-              <mask
-                id="cs_mask_1_ellipse-12"
-                style={{ maskType: "alpha" }}
-                width="200"
-                height="200"
-                x="0"
-                y="0"
-                maskUnits="userSpaceOnUse"
-              >
-                <path
-                  fill="#fff"
-                  fillRule="evenodd"
-                  d="M100 150c27.614 0 50-22.386 50-50s-22.386-50-50-50-50 22.386-50 50 22.386 50 50 50zm0 50c55.228 0 100-44.772 100-100S155.228 0 100 0 0 44.772 0 100s44.772 100 100 100z"
-                  clipRule="evenodd"
-                ></path>
-              </mask>
-              <g mask="url(#cs_mask_1_ellipse-12)">
-                <path fill="#fff" d="M200 0H0v200h200V0z"></path>
-                <path
-                  fill="#0066FF"
-                  fillOpacity="0.33"
-                  d="M200 0H0v200h200V0z"
-                ></path>
-                <g
-                  filter="url(#filter0_f_844_2811)"
-                  className="animate-pulse"
-                >
-                  <path fill="#0066FF" d="M110 32H18v68h92V32z"></path>
-                  <path fill="#0044FF" d="M188-24H15v98h173v-98z"></path>
-                  <path fill="#0099FF" d="M175 70H5v156h170V70z"></path>
-                  <path fill="#00CCFF" d="M230 51H100v103h130V51z"></path>
-                </g>
-              </g>
-            </g>
-            <defs>
-              <filter
-                id="filter0_f_844_2811"
-                width="385"
-                height="410"
-                x="-75"
-                y="-104"
-                colorInterpolationFilters="sRGB"
-                filterUnits="userSpaceOnUse"
-              >
-                <feFlood floodOpacity="0" result="BackgroundImageFix"></feFlood>
-                <feBlend
-                  in="SourceGraphic"
-                  in2="BackgroundImageFix"
-                  result="shape"
-                ></feBlend>
-                <feGaussianBlur
-                  result="effect1_foregroundBlur_844_2811"
-                  stdDeviation="40"
-                ></feGaussianBlur>
-              </filter>
-              <clipPath id="cs_clip_1_ellipse-12">
-                <path fill="#fff" d="M0 0H200V200H0z"></path>
-              </clipPath>
-            </defs>
-          </svg>
-        </div>
+    <div className="flex min-h-full flex-col px-4 pb-24 pt-5">
+      <div className="mb-6 flex items-center justify-between"><div className="flex items-center gap-2"><Sparkles size={16} className="text-sidebar-primary" /><h2 className="text-sm font-semibold text-white">News assistant</h2></div>{query && <button onClick={() => { setQuery(null); setStage(0); }} className="text-neutral-600 hover:text-white"><X size={15} /></button>}</div>
 
-        {/* Welcome message */}
-        <div className="mb-6 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            className="flex flex-col items-center"
-          >
-            <h1 className="text-lg font-semibold text-foreground mb-1">
-              AI News Assistant
-            </h1>
-            <p className="text-xs text-muted-foreground">
-              Ask about today's news
-            </p>
-          </motion.div>
+      {!query ? (
+        <div className="my-auto">
+          <h3 className="text-2xl font-medium tracking-tight text-white">What would you like to know?</h3>
+          <p className="mt-2 text-sm leading-6 text-neutral-500">Search the news, compare sources, or update a tracker.</p>
+          <div className="mt-6 space-y-2">{SUGGESTIONS.map((suggestion) => <button key={suggestion} onClick={() => runQuery(suggestion)} className="block w-full rounded-xl border border-white/[.08] p-3 text-left text-xs text-neutral-400 transition hover:bg-white/[.03] hover:text-white">{suggestion}</button>)}</div>
         </div>
-
-        {/* Input area */}
-        <div className="w-full border border-white/10 bg-white/5 backdrop-blur-sm rounded-lg overflow-hidden mb-3">
-          <div className="p-3">
-            <input
-              ref={inputRef}
-              type="text"
-              placeholder="Ask about today's news..."
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              className="w-full text-xs text-foreground bg-transparent outline-none placeholder:text-muted-foreground"
-            />
+      ) : (
+        <div>
+          <div className="ml-auto max-w-[85%] rounded-2xl rounded-br-md bg-sidebar-primary/15 px-4 py-3 text-sm leading-6 text-neutral-200">{query}</div>
+          <div className="mt-7 space-y-3 border-l border-white/[.08] pl-4">
+            <StatusRow done={stage > 1} active={stage === 1} label="Understanding your request" />
+            <StatusRow done={stage > 2} active={stage === 2} label="Searching recent coverage" />
+            <StatusRow done={stage >= 3} active={false} label="Sources reviewed and feed updated" />
           </div>
-
-          {/* Uploaded files */}
-          {uploadedFiles.length > 0 && (
-            <div className="px-3 pb-2">
-              <div className="flex flex-wrap gap-1">
-                {uploadedFiles.map((file, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-1 bg-white/10 py-1 px-2 rounded text-xs"
-                  >
-                    <FileText className="w-2 h-2 text-primary" />
-                    <span className="text-foreground">{file}</span>
-                    <button
-                      onClick={() =>
-                        setUploadedFiles((prev) => prev.filter((_, i) => i !== index))
-                      }
-                      className="text-muted-foreground hover:text-foreground"
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Functions and actions */}
-          <div className="px-3 py-2 flex items-center justify-between border-t border-white/10">
-            <div className="flex items-center gap-1">
-              <button
-                onClick={() => setSearchEnabled(!searchEnabled)}
-                className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
-                  searchEnabled
-                    ? "bg-primary/20 text-primary"
-                    : "bg-white/10 text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                <Search className="w-3 h-3" />
-                <span>Search</span>
-              </button>
-              <button
-                onClick={() => setReasonEnabled(!reasonEnabled)}
-                className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
-                  reasonEnabled
-                    ? "bg-primary/20 text-primary"
-                    : "bg-white/10 text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                <BrainCircuit className="w-3 h-3" />
-                <span>AI</span>
-              </button>
-            </div>
-            <div className="flex items-center gap-1">
-              <button className="p-1 text-muted-foreground hover:text-foreground transition-colors">
-                <Mic className="w-3 h-3" />
-              </button>
-              <button
-                onClick={handleSendMessage}
-                disabled={!inputValue.trim()}
-                className={`w-6 h-6 flex items-center justify-center rounded transition-colors ${
-                  inputValue.trim()
-                    ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                    : "bg-white/10 text-muted-foreground cursor-not-allowed"
-                }`}
-              >
-                <ArrowUp className="w-3 h-3" />
-              </button>
-            </div>
-          </div>
+          <AnimatePresence>{stage >= 3 && <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-7 text-sm leading-7 text-neutral-300"><p>The strongest pattern across today’s coverage is a shift from announcements toward deployment. Technology investment remains resilient, while policy and infrastructure constraints are becoming more important.</p><p className="mt-4">I compared the latest reporting across the sources in your feed. Open any story to inspect its summary, source list, related perspectives, and clips.</p><div className="mt-5 flex items-center gap-2 text-xs text-neutral-500"><span className="flex h-6 w-6 items-center justify-center rounded-full border border-white/[.08]"><Search size={12} /></span>8 stories · 21 sources</div></motion.div>}</AnimatePresence>
         </div>
+      )}
 
-        {/* Command suggestions */}
-        <AnimatePresence>
-          {activeCommandCategory && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="w-full overflow-hidden"
-            >
-              <div className="border border-white/10 bg-white/5 backdrop-blur-sm rounded-lg overflow-hidden">
-                <div className="p-2 border-b border-white/10">
-                  <h3 className="text-xs font-medium text-foreground">
-                    {activeCommandCategory === "learn"
-                      ? "Learning suggestions"
-                      : activeCommandCategory === "code"
-                      ? "Coding suggestions"
-                      : "Writing suggestions"}
-                  </h3>
-                </div>
-                <ul className="divide-y divide-white/10">
-                  {commandSuggestions[
-                    activeCommandCategory as keyof typeof commandSuggestions
-                  ].map((suggestion, index) => (
-                    <motion.li
-                      key={index}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: index * 0.03 }}
-                      onClick={() => handleCommandSelect(suggestion)}
-                      className="p-2 hover:bg-white/10 cursor-pointer transition-colors"
-                    >
-                      <div className="flex items-center gap-2">
-                        {activeCommandCategory === "learn" ? (
-                          <BookOpen className="w-3 h-3 text-primary" />
-                        ) : activeCommandCategory === "code" ? (
-                          <Code className="w-3 h-3 text-primary" />
-                        ) : (
-                          <PenTool className="w-3 h-3 text-primary" />
-                        )}
-                        <span className="text-xs text-foreground">
-                          {suggestion}
-                        </span>
-                      </div>
-                    </motion.li>
-                  ))}
-                </ul>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+      <div className="absolute inset-x-3 bottom-3 flex h-14 items-center gap-2 rounded-xl border border-white/[.1] bg-[#111923] px-3 shadow-xl"><input value={input} onChange={(event) => setInput(event.target.value)} onKeyDown={(event) => event.key === "Enter" && runQuery()} placeholder="Ask about the news…" className="min-w-0 flex-1 bg-transparent text-xs text-white outline-none placeholder:text-neutral-600" /><button className="text-neutral-500"><Mic size={17} /></button><button onClick={() => runQuery()} disabled={!input.trim()} className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-neutral-950 disabled:bg-white/10 disabled:text-neutral-600"><ArrowUp size={15} /></button></div>
     </div>
   );
 }
 
-interface CommandButtonProps {
-  icon: React.ReactNode;
-  label: string;
-  isActive: boolean;
-  onClick: () => void;
-}
-
-function CommandButton({ icon, label, isActive, onClick }: CommandButtonProps) {
-  return (
-    <motion.button
-      onClick={onClick}
-      className={`flex flex-col items-center justify-center gap-1 p-2 rounded-lg border transition-all ${
-        isActive
-          ? "bg-primary/20 border-primary/30"
-          : "border-white/10 bg-white/5 hover:bg-white/10"
-      }`}
-    >
-      <div className={`${isActive ? "text-primary" : "text-muted-foreground"}`}>
-        {icon}
-      </div>
-      <span
-        className={`text-xs font-medium ${
-          isActive ? "text-primary" : "text-muted-foreground"
-        }`}
-      >
-        {label}
-      </span>
-    </motion.button>
-  );
+function StatusRow({ done, active, label }: { done: boolean; active: boolean; label: string }) {
+  return <div className="flex items-center gap-3 text-xs"><span className="-ml-[22px] flex h-3 w-3 items-center justify-center bg-[#0a101a]">{done ? <Check size={13} className="text-emerald-400" /> : <Circle size={8} className={active ? "animate-pulse fill-sidebar-primary text-sidebar-primary" : "text-neutral-700"} />}</span><span className={done ? "text-neutral-400" : active ? "text-white" : "text-neutral-600"}>{label}</span></div>;
 }
